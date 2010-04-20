@@ -1,0 +1,19 @@
+#!/bin/bash
+ref=$1
+if [[ -z $ref ]]; then
+    ref=$(git symbolic-ref HEAD 2> /dev/null) || return
+    ref=$(echo "${ref#refs/heads/}")
+fi
+ready=release-ready/$ref
+echo "Moving branch $ref to $ready"
+
+git branch -m $ref $ready
+echo "Pushing new branch $ready to remote"
+git push origin $ready
+echo "Removing local branch $ref"
+git push origin :$ref
+echo "Updating remote"
+git remote update --prune
+echo "Branch $ref Ready."
+echo "$ref => $ready"
+echo Done

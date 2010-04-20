@@ -1,0 +1,37 @@
+#!/bin/bash
+function released()
+{
+    local ref=$1
+    local released=released/${ref/release-ready\/}
+    echo "$ref => $released"
+
+    git branch -m $ref $released
+
+    # delete remote original branch
+    git push -q origin :$ref
+
+    # push new branch to remote
+    git push -q origin $released
+
+    # remove local branch
+    git branch -d $released
+}
+
+ref=$1
+if [[ -z $ref ]] ; then
+    ref=$(git symbolic-ref HEAD 2> /dev/null) || return
+    ref=$(echo "${ref#refs/heads/}")
+fi
+
+if [[ $ref == "all" ]] ; then
+    echo "$(git branch -l | grep release-ready)"  | while read branch ; do
+        if [[ ! -z $branch ]] ; then
+            released $branch
+            git remote update --prune
+        fi
+    done
+else
+    released $ref
+fi
+
+echo Done
