@@ -39,6 +39,6 @@ ssh $REMOTE "bash $TF"
 
 if [[ -z `git remote | grep $REMOTE_NAME` ]] ; then
     git remote add $REMOTE_NAME git@$REMOTE:/git/$REPO.git
-    git push $REMOTE_NAME master
 fi
+git push $REMOTE_NAME master
 rm -v $TF
