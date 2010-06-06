@@ -31,14 +31,17 @@ cd ..
 sudo chown -R git: $REPO.git
 sudo chmod -R g+rw $REPO.git
 cd 
-rm -v $TF
+rm $TF
 END
 
 scp $TF $REMOTE:
 ssh $REMOTE "bash $TF"
 
 if [[ -z `git remote | grep $REMOTE_NAME` ]] ; then
+    echo "Adding remote $REMOTE_NAME => git@$REMOTE:/git/$REPO.git"
     git remote add $REMOTE_NAME git@$REMOTE:/git/$REPO.git
 fi
-git push $REMOTE_NAME master
-rm -v $TF
+echo "Pushing to remote $REMOTE_NAME"
+git push $REMOTE_NAME master > /dev/null
+rm $TF
+echo "Done"
