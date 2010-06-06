@@ -1,0 +1,34 @@
+#!/bin/bash
+REMOTE=$1
+REMOTE_NAME=$2
+REPO=$(basename `pwd`)
+
+if [[ -z $REMOTE_NAME ]]; then
+    REMOTE_NAME=origin
+fi
+
+TF=.script-$RANDOM
+
+cat <<END > $TF
+if [[ -e /git/$REPO.git ]] ; then
+    echo "Repository has been created."
+    exit
+fi
+sudo mkdir /git/$REPO.git
+cd /git/$REPO.git
+sudo git init --bare 
+cd ..
+sudo chown -R git: $REPO.git
+sudo chmod -R g+rw $REPO.git
+cd 
+rm -v $TF
+END
+
+scp $TF $REMOTE:
+ssh $REMOTE "bash $TF"
+
+if [[ -z `git remote | grep $REMOTE_NAME` ]] ; then
+    git remote add $REMOTE_NAME git@$REMOTE:/git/$REPO.git
+    git push $REMOTE_NAME master
+fi
+rm -v $TF
