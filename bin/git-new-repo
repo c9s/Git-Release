@@ -3,6 +3,16 @@ REMOTE=$1
 REMOTE_NAME=$2
 REPO=$(basename `pwd`)
 
+if [[ -z $REMOTE ]] ; then
+    echo <<END
+    Usage: 
+
+        git new-repo [remote host] [remote name]
+
+END
+    exit;
+fi
+
 if [[ -z $REMOTE_NAME ]]; then
     REMOTE_NAME=origin
 fi
