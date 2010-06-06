@@ -20,11 +20,11 @@ fi
 TF=.script-$RANDOM
 
 cat <<END > $TF
-if [[ -e /git/$REPO.git ]] ; then
+if [[ -e /git/$REPO.git/.git ]] ; then
     echo "Repository has been created."
     exit
 fi
-sudo mkdir /git/$REPO.git
+sudo mkdir -p /git/$REPO.git
 cd /git/$REPO.git
 sudo git init --bare 
 cd ..
