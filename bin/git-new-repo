@@ -28,7 +28,9 @@ sudo mkdir -p /git/$REPO.git
 cd /git/$REPO.git
 sudo git init --bare 
 cd ..
+echo "Changing ownership"
 sudo chown -R git: $REPO.git
+echo "Changing permission"
 sudo chmod -R g+rw $REPO.git
 cd 
 rm $TF
