@@ -35,5 +35,9 @@ else
 fi
 
 git remote update --prune
+
+echo Tagging release version
+tagname=release-$(date +%Y%m%d)
+git tag $tagname -m "Tagging $tagname"
 git gc
 echo Done
