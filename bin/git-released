@@ -2,16 +2,17 @@
 function released()
 {
     local ref=$1
-    local released=released/${ref/release-ready\/}
+    local released=released/${ref/ready\/}
     echo "$ref => $released"
 
     git branch -m $ref $released
 
     # delete remote original branch
-    git push -q origin :$ref
-
-    # push new branch to remote
-    git push -q origin $released
+    git remote | while read remote ; do
+        git push -q $remote :$ref
+        # push new branch to remote
+        git push -q $remote $released
+    done
 
     # remove local branch
     git branch -d $released
@@ -24,14 +25,15 @@ if [[ -z $ref ]] ; then
 fi
 
 if [[ $ref == "all" ]] ; then
-    echo "$(git branch -l | grep release-ready)"  | while read branch ; do
+    echo "$(git branch -l | grep 'ready/')"  | while read branch ; do
         if [[ ! -z $branch ]] ; then
             released $branch
-            git remote update --prune
         fi
     done
 else
     released $ref
 fi
 
+git remote update --prune
+git gc
 echo Done
