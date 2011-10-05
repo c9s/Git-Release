@@ -34,6 +34,7 @@ else
     released $ref
 fi
 
+# Need more improvement.
 git remote update --prune
 
 echo Tagging release version

@@ -1,0 +1,68 @@
+
+
+# Git Release
+
+A Git Workflow Utility Scripts.
+
+
+
+## Basic Concept
+
+### Feature Branch
+
+To create a feature branch from current branch:
+
+    $ git feature [feature name]
+
+To create a feature branch from a branch:
+
+    $ git feature [feature name] [your branch]
+
+### Hotfix Branch
+
+To create a hotfix branch from current branch:
+
+    $ git hotfix [hotfix name]
+
+To create a hotfix branch from master branch:
+
+    $ git hotfix [hotfix name] master
+
+### Release Branch
+
+To create a release branch (should be branched from master or develop)
+
+    $ git release new [version name]
+
+Once your release branch is ready, you can run release.
+
+    $ git release
+
+The git release steps are followed below,
+
+* Move current ready/ branches into released.
+* Merge current release branch into master.
+* Delete current release branch.
+* Tagging a release version on master.
+
+### Release Ready
+
+When your feature branch or hotfix branch are ready to go, move into ready/ directory,
+and the branch will be merged into current release branch for testing.
+
+To move current branch to ready/:
+
+    $ git ready
+
+To move specified branch to ready/:
+
+    $ git ready [branch name]
+
+
+
+
+# Reference
+
+http://nvie.com/posts/a-successful-git-branching-model/
+
+http://reinh.com/blog/2009/03/02/a-git-workflow-for-agile-teams.html
