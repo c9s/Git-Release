@@ -5,15 +5,12 @@
 A Git workflow utility scripts.
 
 
-
-## Basic Concept
-
-### The main branches
+## The main branches
 
 * master
 * develop
 
-#### Master Branch
+### Master Branch
 
 The master branch at origin should be familiar to every Git user. Parallel to
 the master branch.
@@ -22,14 +19,12 @@ We consider origin/master to be the main branch where the source code of HEAD
 always reflects a production-ready state.
 
 
-#### Develop Branch
+### Develop Branch
 
 We consider origin/develop to be the main branch where the source code of HEAD
 always reflects a state with the latest delivered development changes for the
 next release. Some would call this the “integration branch”. This is where
 any automatic nightly builds are built from.
-
-
 
 
 
