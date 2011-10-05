@@ -154,3 +154,7 @@ to customzie your git-release config, edit your .gitconfig:
 http://nvie.com/posts/a-successful-git-branching-model/
 
 http://reinh.com/blog/2009/03/02/a-git-workflow-for-agile-teams.html
+
+
+
+(Comments are welcome)
