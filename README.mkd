@@ -9,8 +9,10 @@ A Git workflow utility scripts.
 
 ## Basic Concept
 
-
 ### The main branches
+
+* master
+* develop
 
 #### Master Branch
 
@@ -27,6 +29,9 @@ We consider origin/develop to be the main branch where the source code of HEAD
 always reflects a state with the latest delivered development changes for the
 next release. Some would call this the “integration branch”. This is where
 any automatic nightly builds are built from.
+
+
+
 
 
 ### Feature Branch
@@ -133,6 +138,22 @@ So a site branch is branched off from a released framework version.
 
 Custom Features might be developed on it, some of them can be merged back into
 the next release branch.
+
+
+
+# Configuration
+
+
+to customzie your git-release config, edit your .gitconfig:
+    
+    [git-release]
+        develop_branch = development
+        production_branch = master
+        production_branch = production
+        release_branch_prefix = release-
+        feature_branch_prefix = feature-
+        hotfix_branch_prefix  = hotfix-
+        site_branch_prefix    = 
 
 # Reference
 
