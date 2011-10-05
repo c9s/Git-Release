@@ -1,14 +1,29 @@
 
 
+
 # Git Release
 
 A Git Workflow Utility Scripts.
 
 
-
 ## Basic Concept
 
+
+
+### Master Branch
+
+
+### Develop Branch
+
+
 ### Feature Branch
+
+A feature branch may branch off from `develop` branch,
+
+If a feature branch is finished, the branch can be merged into develop (if it's a small feature).
+
+Or it should be merged into `release` branch, and be renamed with ready/ prefix.
+
 
 To create a feature branch from current branch:
 
@@ -18,19 +33,33 @@ To create a feature branch from a branch:
 
     $ git feature [feature name] [your branch]
 
+
+
+
 ### Hotfix Branch
 
-To create a hotfix branch from current branch:
+May branch off from `master`,
+
+Must merge back into `develop` and `master`.
+
+
+To create a hotfix branch from master:
 
     $ git hotfix [hotfix name]
 
-To create a hotfix branch from master branch:
+This is not recommended, but you can still create a hotfix branch from a specified branch, 
+if your production branch is not named master,
 
-    $ git hotfix [hotfix name] master
+    $ git hotfix [hotfix name] your_branch
 
 ### Release Branch
 
-To create a release branch (should be branched from master or develop)
+A release branch may branch off from `develop`, and must merge back into: `develop` & `master`.
+
+Branch naming convention: `release-*`
+
+
+To create a release branch (should be branched from develop)
 
     $ git release new [version name]
 
@@ -43,9 +72,11 @@ The git release steps are followed below,
 * Move current ready/ branches into released.
 * Merge current release branch into master.
 * Delete current release branch.
-* Tagging a release version on master.
+* Tag a release version on master.
+* Rebase master branch onto `develop` branch.
 
-### Release Ready
+
+### Release Ready Branch
 
 When your feature branch or hotfix branch are ready to go, move into ready/ directory,
 and the branch will be merged into current release branch for testing.
@@ -58,8 +89,20 @@ To move specified branch to ready/:
 
     $ git ready [branch name]
 
+To setup specified branch to ready, and merge into specified branch (master or develop)
+
+    $ git ready [branch name] --merge [target branches]
+
+For example, to setup hotfix-3011 branch to ready, and merge into master, develop branches:
+
+    $ git ready hotfix-3011 --merge master,develop
 
 
+Steps are followed below:
+
+* Move local branch to ready/
+* Prune remote branches.
+* Merge into current release branch.
 
 # Reference
 
