@@ -1,9 +1,7 @@
 
-
 # Git Release
 
-A Git workflow utility scripts.
-
+Git release process flow helper scripts.
 
 ## The main branches
 
@@ -18,15 +16,12 @@ the master branch.
 We consider origin/master to be the main branch where the source code of HEAD
 always reflects a production-ready state.
 
-
 ### Develop Branch
 
 We consider origin/develop to be the main branch where the source code of HEAD
 always reflects a state with the latest delivered development changes for the
 next release. Some would call this the “integration branch”. This is where
 any automatic nightly builds are built from.
-
-
 
 ### Feature Branch
 
@@ -39,7 +34,6 @@ and the branch should be renamed with ready/ prefix, which means this branch is 
 
 By this, you can easily distinguish what branch is going to be released, what
 branch should be waiting the next release.
-
 
 To create a feature branch from current branch:
 
@@ -66,10 +60,6 @@ This is not recommended, but you can still create a hotfix branch from a specifi
 if your production branch is not named master,
 
     $ git hotfix [hotfix name] your_branch
-
-
-
-
 
 ### Release Branch
 
@@ -154,7 +144,6 @@ to customzie your git-release config, edit your .gitconfig:
 http://nvie.com/posts/a-successful-git-branching-model/
 
 http://reinh.com/blog/2009/03/02/a-git-workflow-for-agile-teams.html
-
 
 
 (Comments are welcome)
