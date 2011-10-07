@@ -146,4 +146,10 @@ http://nvie.com/posts/a-successful-git-branching-model/
 http://reinh.com/blog/2009/03/02/a-git-workflow-for-agile-teams.html
 
 
+# Todo
+
+* ticket integration.
+* config integration.
+
+
 (Comments are welcome)
