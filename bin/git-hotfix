@@ -11,7 +11,7 @@ my ($action, $hotfix_prefix,$hotfix_name, $branch_off, $branch_name);
    
 ($action,$hotfix_name,$branch_off) = @ARGV;
 
-exit unless $hotfix_name ;
+die 'action required' unless $action;
 
 
 

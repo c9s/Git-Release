@@ -44,7 +44,6 @@ To create a feature branch from a branch:
     $ git feature [feature name] [your branch]
 
 
-
 ### Hotfix Branch
 
 May branch off from `master`,
@@ -60,30 +59,6 @@ This is not recommended, but you can still create a hotfix branch from a specifi
 if your production branch is not named master,
 
     $ git hotfix new [hotfix name] your_branch
-
-### Release Branch
-
-A release branch may branch off from `develop`, 
-and must merge back into: `develop` & `master`.
-
-Branch naming convention: `release-*`
-
-
-To create a release branch (should be branched from develop)
-
-    $ git release new [version name]
-
-Once your release branch is ready, you can run release.
-
-    $ git release
-
-The git release steps are followed below,
-
-* Move current ready/ branches into released.
-* Merge current release branch into master.
-* Delete current release branch.
-* Tag a release version on master.
-* Rebase master branch onto `develop` branch.
 
 
 ### Release Ready Branch
@@ -110,10 +85,34 @@ For example, to setup hotfix-3011 branch to ready, and merge into master, develo
 
 Steps are followed below:
 
+* Trigger unit tests, selenium tests, continue to next step if it passed.
 * Move local branch to ready/
 * Prune remote branches.
 * Merge into current release branch.
 
+### Release Branch
+
+A release branch may branch off from `develop`, 
+and must merge back into: `develop` & `master`.
+
+Branch naming convention: `release-*`
+
+
+To create a release branch (should be branched from develop)
+
+    $ git release new [version name]
+
+Once your release branch is ready, you can run release.
+
+    $ git release
+
+The git release steps are followed below,
+
+* Move current ready/ branches into released.
+* Merge current release branch into master.
+* Delete current release branch.
+* Tag a release version on master.
+* Rebase master branch onto `develop` branch.
 
 ### Site Branch
 
