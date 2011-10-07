@@ -68,8 +68,11 @@ SKIP_VERSION:
         say "Creating branch from $develop_branch";
         $repo->command( 'checkout' , '-b' , $new_release , $develop_branch );
 
+        # find all ready branches, and merge them into it.
+
         say 'Done';
     }
+
     default { 
         # do release !!
 

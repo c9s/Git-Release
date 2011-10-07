@@ -24,7 +24,7 @@ my $repo = Git->repository (Directory => $working_dir );
 
 
 given( $action ) {
-    when ( 'create' ) { 
+    when ( 'new' ) { 
         say "Creating branch $branch_name from $branch_off";
         $repo->command( 'checkout' , '-b' , $branch_name , $branch_off );
         say "Done";
@@ -36,11 +36,11 @@ __END__
 
 To create a hotfix branch from master, for ticket 13033:
 
-    git hotfix create bug0001
+    git hotfix new bug0001
 
 Or
 
-    git hotfix create bug0001 master
+    git hotfix new bug0001 master
 
 should work.
 

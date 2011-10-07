@@ -54,12 +54,12 @@ Must merge back to `develop` and `master`.
 
 To create a hotfix branch from master:
 
-    $ git hotfix [hotfix name]
+    $ git hotfix new [hotfix name]
 
 This is not recommended, but you can still create a hotfix branch from a specified branch, 
 if your production branch is not named master,
 
-    $ git hotfix [hotfix name] your_branch
+    $ git hotfix new [hotfix name] your_branch
 
 ### Release Branch
 
