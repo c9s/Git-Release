@@ -1,0 +1,48 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use feature qw(say switch);
+use Cwd;
+use Git;
+use Getopt::Long;
+
+my ($action, $hotfix_prefix,$hotfix_name, $branch_off, $branch_name);
+   
+($action,$hotfix_name,$branch_off) = @ARGV;
+
+exit unless $hotfix_name ;
+
+$branch_off ||= 'master';
+$hotfix_prefix ||= 'hotfix-';
+$branch_name = $hotfix_prefix . $hotfix_name;
+
+
+my $result = GetOptions( '' );
+
+# my $version = Git::command_oneline('version');
+my $working_dir = getcwd();
+my $repo = Git->repository (Directory => $working_dir );
+
+
+given( $action ) {
+    when ( 'create' ) { 
+        say "Creating branch $branch_name from $branch_off";
+        $repo->command( 'checkout' , '-b' , $branch_name , $branch_off );
+        say "Done";
+    }
+}
+
+__END__
+=pod
+
+To create a hotfix branch from master, for ticket 13033:
+
+    git hotfix create bug0001
+
+Or
+
+    git hotfix create bug0001 master
+
+should work.
+
+=cut
