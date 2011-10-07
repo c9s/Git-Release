@@ -5,6 +5,7 @@ use feature qw(say switch);
 use Cwd;
 use Git;
 use Getopt::Long;
+$|++;
 
 my ($action, $hotfix_prefix,$hotfix_name, $branch_off, $branch_name);
    
@@ -16,8 +17,6 @@ $branch_off ||= 'master';
 $hotfix_prefix ||= 'hotfix-';
 $branch_name = $hotfix_prefix . $hotfix_name;
 
-
-my $result = GetOptions( '' );
 
 # my $version = Git::command_oneline('version');
 my $working_dir = getcwd();

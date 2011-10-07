@@ -1,44 +1,79 @@
-#!/bin/bash
-function released()
+#!/usr/bin/env perl
+use warnings;
+use strict;
+use feature qw(say switch);
+use Cwd;
+use Git;
+use Getopt::Long;
+use List::MoreUtils qw(uniq);
+$|++;
+my $action = shift;
+my $release_prefix = 'release-';
+my $develop_branch = 'develop';
+
+my $working_dir = getcwd();
+my $repo = Git->repository ( WorkingSubdir => $working_dir );
+my @branches = uniq map { chomp; $_ } map { s/remotes\/.*?\///; $_ } map { s/^\*?\s*//; $_; } $repo->command( 'branch' , '-a' );
+
+# use Data::Dumper; warn Dumper( \@branches );
+# exit;
+
+given ( $action ) 
 {
-    local ref=$1
-    local released=released/${ref/ready\/}
-    echo "$ref => $released"
+    when ( 'init' )  {  
+        # check for develop branch
+        say 'Init git release process';
 
-    git branch -m $ref $released
+        say 'Fetching remotes...';
+        $repo->command( 'fetch' , '--all' , '--prune' );
 
-    # delete remote original branch
-    git remote | while read remote ; do
-        git push -q $remote :$ref
-        # push new branch to remote
-        git push -q $remote $released
-    done
+        if( grep /\/?develop/,@branches ) {
+            say 'Development branch found.';
+        }
+        else {
+            say 'Creating develop branch';
+            $repo->command( 'branch' , $develop_branch , 'master' );
 
-    # remove local branch
-    git branch -d $released
+            say 'Pushing to remotes';
+            $repo->command( 'push' );
+        }
+        say 'Done';
+    }
+
+    # create new release branch
+    when ( 'new' )  {
+        my $version = shift @ARGV;
+
+SKIP_VERSION:
+        unless( $version ) {
+            # find version from previous release version number.
+            my @release_branches = sort grep /$release_prefix/,@branches;
+            last SKIP_VERSION unless @release_branches;
+
+            my $last_branch = pop @release_branches;
+            my ( $previous_version ) = ($last_branch =~ m/-([0-9.]*)$/);
+
+            last SKIP_VERSION unless $previous_version;
+
+            say "Found previous version: $previous_version";
+
+            $version = $previous_version + 0.01;
+            say "Auto bumping version to $version";
+        }
+
+        die 'require a release version' unless $version;
+
+        my $new_release = $release_prefix . $version;
+        
+        say "Creating branch from $develop_branch";
+        $repo->command( 'checkout' , '-b' , $new_release , $develop_branch );
+
+        say 'Done';
+    }
+    default { 
+        # do release !!
+
+        # tagging 
+    }
 }
 
-ref=$1
-if [[ -z $ref ]] ; then
-    ref=$(git symbolic-ref HEAD 2> /dev/null) || return
-    ref=$(echo "${ref#refs/heads/}")
-fi
-
-if [[ $ref == "all" ]] ; then
-    echo "$(git branch -l | grep 'ready/')"  | while read branch ; do
-        if [[ ! -z $branch ]] ; then
-            released $branch
-        fi
-    done
-else
-    released $ref
-fi
-
-# Need more improvement.
-git remote update --prune
-
-echo Tagging release version
-tagname=release-$(date +%Y%m%d)
-git tag $tagname -m "Tagging $tagname"
-git gc
-echo Done
