@@ -13,14 +13,16 @@ my ($action, $hotfix_prefix,$hotfix_name, $branch_off, $branch_name);
 
 exit unless $hotfix_name ;
 
-$branch_off ||= 'master';
-$hotfix_prefix ||= 'hotfix-';
-$branch_name = $hotfix_prefix . $hotfix_name;
 
 
 # my $version = Git::command_oneline('version');
 my $working_dir = getcwd();
 my $repo = Git->repository ( WorkingSubdir => $working_dir );
+
+
+$branch_off ||= 'master';
+$hotfix_prefix ||= $repo->config('release.hotfix-prefix') || 'hotfix-';
+$branch_name = $hotfix_prefix . $hotfix_name;
 
 
 given( $action ) {

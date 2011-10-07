@@ -7,13 +7,14 @@ use Git;
 use Getopt::Long;
 use List::MoreUtils qw(uniq);
 $|++;
-my $action = shift;
-my $release_prefix = 'release-';
-my $develop_branch = 'develop';
 
 my $working_dir = getcwd();
 my $repo = Git->repository ( WorkingSubdir => $working_dir );
 my @branches = uniq map { chomp; $_ } map { s/remotes\/.*?\///; $_ } map { s/^\*?\s*//; $_; } $repo->command( 'branch' , '-a' );
+
+my $action = shift;
+my $release_prefix = $repo->config('release.release-prefix') || 'release-';
+my $develop_branch = $repo->config('release.develop-branch') || 'develop';
 
 # use Data::Dumper; warn Dumper( \@branches );
 # exit;
@@ -23,11 +24,6 @@ given ( $action )
     when ( 'init' )  {  
         # check for develop branch
         say 'Init git release process';
-
-        my $config = $repo->config( 'release.develop-branch' );
-        use Data::Dumper; warn Dumper( $config );
-        exit;
-
 
         say 'Fetching remotes...';
         $repo->command( 'fetch' , '--all' , '--prune' );
