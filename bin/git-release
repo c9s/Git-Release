@@ -24,6 +24,11 @@ given ( $action )
         # check for develop branch
         say 'Init git release process';
 
+        my $config = $repo->config( 'release.develop-branch' );
+        use Data::Dumper; warn Dumper( $config );
+        exit;
+
+
         say 'Fetching remotes...';
         $repo->command( 'fetch' , '--all' , '--prune' );
 

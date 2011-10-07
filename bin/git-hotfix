@@ -20,7 +20,7 @@ $branch_name = $hotfix_prefix . $hotfix_name;
 
 # my $version = Git::command_oneline('version');
 my $working_dir = getcwd();
-my $repo = Git->repository (Directory => $working_dir );
+my $repo = Git->repository ( WorkingSubdir => $working_dir );
 
 
 given( $action ) {

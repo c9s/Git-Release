@@ -130,14 +130,14 @@ the next release branch.
 
 to customzie your git-release config, edit your .gitconfig:
     
-    [git-release]
-        develop_branch = development
-        production_branch = master
-        production_branch = production
-        release_branch_prefix = release-
-        feature_branch_prefix = feature-
-        hotfix_branch_prefix  = hotfix-
-        site_branch_prefix    = 
+    [release]
+        develop-branch = development
+        production-branch = master
+        production-branch = production
+        release-branch-prefix = release-
+        feature-branch-prefix = feature-
+        hotfix-branch-prefix  = hotfix-
+        site-branch-prefix    = 
 
 # Reference
 
