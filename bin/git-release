@@ -131,9 +131,25 @@ SKIP_VERSION:
 
     default { 
         # do release !!
+        # checkout master branch
+        # merge the last release branch
+        # tagging release tag.
+        # delete release branch.  (if specified, or optioned.)
+
+#         my $ready_prefix = $repo->config('release.ready-prefix') || 'ready/';
+#         my $released_prefix = $repo->config('release.released-prefix') || 'released/';
+#         my @branches = grep /^$ready_prefix/, list_local_branches $repo;
+#         for my $branch ( @branches ) {
+#             $repo->command( 'merge' , '--commit' , $branch );
+#             # move ready branch to released-
+# 
+#             my $new_branch = $branch;
+#             $new_branch =~ s{^$ready_prefix}{$released_prefix};
+#             $repo->command( 'branch' , '-m' , $branch );
+#         }
 
         # tagging 
-#         say 'Tagging release version';
+        say 'Tagging release version';
 #         my $tagname = $release_prefix;
 #         git tag $tagname -m "Tagging $tagname"
 #         git gc
