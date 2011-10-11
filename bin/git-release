@@ -25,8 +25,9 @@ given ( $action )
         # check for develop branch
         say 'Init git release process';
 
-        say 'Fetching remotes...';
-        $repo->command( 'fetch' , '--all' , '--prune' );
+        say 'Updating remotes...';
+        $repo->command(qw(remote update --prune));
+        $repo->command(qw(fetch --all --prune));
 
         if( grep /\/?develop/,@branches ) {
             say 'Development branch found.';
