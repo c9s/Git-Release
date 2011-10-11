@@ -6,6 +6,7 @@ use Cwd;
 use Git;
 use Getopt::Long;
 use List::MoreUtils qw(uniq);
+use DateTime;
 $|++;
 
 my $working_dir = getcwd();
@@ -19,6 +20,49 @@ my $develop_branch = $repo->config('release.develop-branch') || 'develop';
 # use Data::Dumper; warn Dumper( \@branches );
 # exit;
 
+sub parse_release_version {
+    my $release_branch = shift;
+    my ( $previous_version ) = ($last_branch =~ m/-([0-9-.]*)$/);  # get the release version.
+    return $previous_version;
+}
+
+
+# list remote, local branches
+sub list_all_branches {
+    my $repo = shift;
+
+    # remove remtoes names, strip star char.
+    return uniq 
+            map { chomp; $_; } 
+            map { s/remotes\/.*?\///; $_ } 
+            map { s/^\*?\s*//; $_; } 
+                $repo->command( 'branch' , '-a' );
+}
+
+sub list_local_branches {
+    my $repo = shift;
+    return map { chomp; $_; } 
+           map { s/^\*?\s*//; $_; } 
+           $repo->command( 'branch' , '-l' );
+}
+
+sub find_ready_branches {
+    my $repo = shift;
+    my $ready_prefix = $repo->config('release.ready-prefix') || 'ready-';
+    my @branches = list_all_branches $repo;
+    my @ready_branches = grep /$ready_prefix/, @branches;
+    return @ready_branches;
+}
+
+sub find_current_release_branch_name {
+    my $repo = shift;
+    my $release_prefix = $repo->config('release.release-prefix') || 'release-';
+    my @branches = list_all_branches $repo;
+    my @release_branches = sort grep /$release_prefix/, @branches;
+    return unless @release_branches;  # release branch not found.
+    return pop @release_branches;
+}
+
 given ( $action ) 
 {
     when ( 'init' )  {  
@@ -29,6 +73,7 @@ given ( $action )
         $repo->command(qw(remote update --prune));
         $repo->command(qw(fetch --all --prune));
 
+        # do we have branches ?
         if( grep /\/?develop/,@branches ) {
             say 'Development branch found.';
         }
@@ -37,7 +82,9 @@ given ( $action )
             $repo->command( 'branch' , $develop_branch , 'master' );
 
             say 'Pushing to remotes';
-            $repo->command( 'push' );
+            for my $remote ( split /\n/,$repo->command('remote') ) {
+                $repo->command( 'push' , $remote , $develop_branch );
+            }
         }
         say 'Done';
     }
@@ -49,12 +96,10 @@ given ( $action )
 SKIP_VERSION:
         unless( $version ) {
             # find version from previous release version number.
-            my @release_branches = sort grep /$release_prefix/,@branches;
-            last SKIP_VERSION unless @release_branches;
+            my $release_branch = find_current_release_branch_name $repo;
+            last SKIP_VERSION unless $release_branch;
 
-            my $last_branch = pop @release_branches;
-            my ( $previous_version ) = ($last_branch =~ m/-([0-9.]*)$/);
-
+            my $previous_version = parse_release_version $release_branch;
             last SKIP_VERSION unless $previous_version;
 
             say "Found previous version: $previous_version";
@@ -63,15 +108,24 @@ SKIP_VERSION:
             say "Auto bumping version to $version";
         }
 
-        die 'require a release version' unless $version;
-
+        die 'Require a release version' unless $version;
         my $new_release = $release_prefix . $version;
         
-        say "Creating branch from $develop_branch";
+        say "Creating release branch from $develop_branch";
         $repo->command( 'checkout' , '-b' , $new_release , $develop_branch );
 
-        # find all ready branches, and merge them into it.
 
+        # Now we are on release branch...
+        # TODO: find all ready branches, and merge them into it.
+#         my %local = map { $_ => $_ } list_local_branches $repo;
+#         my @branches = list_all_branches $repo;
+#         for my $br ( @branches ) {
+#             # if it's local branch, merge it
+#             if( $local{ $br } ) {
+#                 $repo->command( 'merge', $br );
+#             } else {
+#             }
+#         }
         say 'Done';
     }
 
@@ -79,6 +133,11 @@ SKIP_VERSION:
         # do release !!
 
         # tagging 
+#         say 'Tagging release version';
+#         my $tagname = $release_prefix;
+#         git tag $tagname -m "Tagging $tagname"
+#         git gc
+#         echo Done
     }
 }
 
