@@ -16,12 +16,17 @@ Git::command('init');
 my $re = Git::Release->new;
 diag 'Testing Path: ' . $re->repo->wc_path;
 
-open FH , ">" , 'README';
-print FH "README";
-close FH;
-$re->repo->command( 'add' , 'README' );
-$re->repo->command( 'commit' , 'README' , '-m' , '"Commit"' );
 
+
+sub make_change {
+    my $re = shift;
+    open FH , ">>" , 'README';
+    print FH "README";
+    close FH;
+    $re->repo->command( 'add' , 'README' );
+    $re->repo->command( 'commit' , 'README' , '-m' , '"Change"' );
+}
+make_change $re;
 
 
 ok( $re );
