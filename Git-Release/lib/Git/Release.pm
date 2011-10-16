@@ -67,16 +67,11 @@ sub update_remote_refs {
     $self->repo->command(qw(fetch --all --prune));
 }
 
-
-
-
-
-
-
-
-
-
-
+sub create_develop_branch {
+    my $self = shift;
+    my $name = $self->config->develop_branch;
+    $self->repo->command( 'branch' , $name , 'master' );
+}
 
 1;
 __END__

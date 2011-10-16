@@ -7,11 +7,14 @@ use Git;
 use Getopt::Long;
 use List::MoreUtils qw(uniq);
 use DateTime;
+use Git::Release;
 $|++;
 
-my $working_dir = getcwd();
-my $repo = Git->repository ( WorkingSubdir => $working_dir );
-my @branches = uniq map { chomp; $_ } map { s/remotes\/.*?\///; $_ } map { s/^\*?\s*//; $_; } $repo->command( 'branch' , '-a' );
+my $release = Git::Release->new;
+
+# my $working_dir = getcwd();
+# my $repo = Git->repository ( WorkingSubdir => $working_dir );
+# my @branches = uniq map { chomp; $_ } map { s/remotes\/.*?\///; $_ } map { s/^\*?\s*//; $_; } $repo->command( 'branch' , '-a' );
 
 my $action = shift;
 my $release_prefix = $repo->config('release.release-prefix') || 'release-';
@@ -83,7 +86,7 @@ given ( $action )
         say 'Init git release process';
 
         say 'Updating remotes...';
-        update_remote_refs $repo;
+        $release->update_remote_refs;
 
         # do we have branches ?
         if( grep /\/?develop/,@branches ) {
@@ -91,7 +94,7 @@ given ( $action )
         }
         else {
             say 'Creating develop branch';
-            $repo->command( 'branch' , $develop_branch , 'master' );
+            $release->create_develop_branch;
 
             say 'Pushing to remotes';
             for my $remote ( split /\n/,$repo->command('remote') ) {
