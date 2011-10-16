@@ -1,0 +1,44 @@
+#!/bin/bash
+function released()
+{
+    local ref=$1
+    local released=released/${ref/ready\/}
+    echo "$ref => $released"
+
+    git branch -m $ref $released
+
+    # delete remote original branch
+    git remote | while read remote ; do
+        git push -q $remote :$ref
+        # push new branch to remote
+        git push -q $remote $released
+    done
+
+    # remove local branch
+    git branch -d $released
+}
+
+ref=$1
+if [[ -z $ref ]] ; then
+    ref=$(git symbolic-ref HEAD 2> /dev/null) || return
+    ref=$(echo "${ref#refs/heads/}")
+fi
+
+if [[ $ref == "all" ]] ; then
+    echo "$(git branch -l | grep 'ready/')"  | while read branch ; do
+        if [[ ! -z $branch ]] ; then
+            released $branch
+        fi
+    done
+else
+    released $ref
+fi
+
+# Need more improvement.
+git remote update --prune
+
+echo Tagging release version
+tagname=release-$(date +%Y%m%d)
+git tag $tagname -m "Tagging $tagname"
+git gc
+echo Done
