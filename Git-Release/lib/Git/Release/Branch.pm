@@ -74,6 +74,7 @@ sub move_to_released {
         $new_name =~ s{^.*/}{};
         $new_name = $released_prefix . $new_name;
         $self->manager->repo->command( 'branch' , '-m' , $name , $self->new_name );
+        return $new_name;
     }
 }
 
