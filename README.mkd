@@ -114,6 +114,7 @@ The git release steps are followed below,
 * Tag a release version on master.
 * Rebase master branch onto `develop` branch.
 
+
 ### Site Branch
 
 Each different site depends on a different released framework version,
@@ -122,10 +123,13 @@ So a site branch is branched off from a released framework version.
 Custom Features might be developed on it, some of them can be merged back into
 the next release branch.
 
+# Helper Scripts
 
+    git-ready
+    git-ready-to-released
+    git-rm-released
 
 # Configuration
-
 
 to customzie your git-release config, edit your .gitconfig:
     

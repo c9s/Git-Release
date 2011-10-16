@@ -26,15 +26,13 @@ sub parse_release_version {
     return $previous_version;
 }
 
-
-# list remote, local branches
+# list all remote, all local branches
 sub list_all_branches {
     my $repo = shift;
 
     # remove remtoes names, strip star char.
     return uniq 
             map { chomp; $_; } 
-            map { s/remotes\/.*?\///; $_ } 
             map { s/^\*?\s*//; $_; } 
                 $repo->command( 'branch' , '-a' );
 }
@@ -46,6 +44,9 @@ sub list_local_branches {
            $repo->command( 'branch' , '-l' );
 }
 
+sub strip_remote_names { map { s/remotes\/.*?\///; $_ } @_; }
+
+# return branches with ready prefix.
 sub find_ready_branches {
     my $repo = shift;
     my $ready_prefix = $repo->config('release.ready-prefix') || 'ready-';
@@ -57,11 +58,21 @@ sub find_ready_branches {
 sub find_current_release_branch_name {
     my $repo = shift;
     my $release_prefix = $repo->config('release.release-prefix') || 'release-';
-    my @branches = list_all_branches $repo;
+    my @branches = strip_remote_names list_all_branches $repo;
     my @release_branches = sort grep /$release_prefix/, @branches;
     return unless @release_branches;  # release branch not found.
     return pop @release_branches;
 }
+
+sub update_remote_refs {
+    my $repo = shift;
+    $repo->command(qw(remote update --prune));
+    $repo->command(qw(fetch --all --prune));
+}
+
+
+
+
 
 given ( $action ) 
 {
@@ -70,8 +81,7 @@ given ( $action )
         say 'Init git release process';
 
         say 'Updating remotes...';
-        $repo->command(qw(remote update --prune));
-        $repo->command(qw(fetch --all --prune));
+        update_remote_refs $repo;
 
         # do we have branches ?
         if( grep /\/?develop/,@branches ) {
@@ -110,22 +120,28 @@ SKIP_VERSION:
 
         die 'Require a release version' unless $version;
         my $new_release = $release_prefix . $version;
-        
+
+        say 'Updating remote refs...';
+        update_remote_refs $repo;
+
+
         say "Creating release branch from $develop_branch";
         $repo->command( 'checkout' , '-b' , $new_release , $develop_branch );
 
 
-        # Now we are on release branch...
-        # TODO: find all ready branches, and merge them into it.
-#         my %local = map { $_ => $_ } list_local_branches $repo;
-#         my @branches = list_all_branches $repo;
-#         for my $br ( @branches ) {
-#             # if it's local branch, merge it
-#             if( $local{ $br } ) {
-#                 $repo->command( 'merge', $br );
-#             } else {
-#             }
-#         }
+        # merge all ready branches
+        my @ready_branches = find_ready_branches $repo;
+        for my $branch_ref ( @ready_branches ) {
+            # it's a remote branch, merge it from remote ref
+            if( $branch_ref =~ s/^remotes\/// ) {
+                say "Merging $branch_ref ...";
+                $repo->command( 'merge' , $branch_ref );
+            } else {
+                say "Merging $branch_ref ...";
+                $repo->command( 'merge' , $branch_ref );
+            }
+        }
+
         say 'Done';
     }
 
