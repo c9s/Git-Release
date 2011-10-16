@@ -7,7 +7,12 @@ has repo => ();
 
 sub ready_prefix {
     my $self = shift;
-    return $self->repo->config('release.ready-prefix') || 'ready-';
+    return $self->repo->config('release.ready-prefix') || 'ready/';
+}
+
+sub released_prefix {
+    my $self = shift;
+    return $self->repo->config('release.released-prefix') || 'released/';
 }
 
 sub release_prefix {
@@ -19,11 +24,5 @@ sub develop_branch {
     my $self = shift;
     return $self->repo->config('release.develop-branch') || 'develop';
 }
-
-
-
-
-
-
 
 1;

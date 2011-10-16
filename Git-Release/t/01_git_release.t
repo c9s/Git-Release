@@ -16,12 +16,17 @@ ok( $re->config );
 ok( $re->config->repo , 'Repository object' );
 is( 'Git' , ref( $re->config->repo ) , 'is Git');
 
-my $branch = Git::Release::Branch->new( ref => 'test' , repo => $re->repo );
+my $branch = Git::Release::Branch->new( ref => 'test', manager => $re );
 ok( $branch , 'branch ok' );
+
+is( $branch->name , 'test' , 'branch name' );
+
 
 $branch->create( from => 'master' );
 ok( $branch->is_local );
 
+my $new_name = $branch->move_to_ready;
+ok( $new_name , $new_name );
 $branch->remove;
 
 
