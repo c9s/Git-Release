@@ -5,6 +5,13 @@ use Mo;
 
 has repo => ();
 
+sub ready_prefix {
+    my $self = shift;
+    return $self->repo->config('release.ready-prefix') || 'ready-';
+}
+
+
+
 
 
 

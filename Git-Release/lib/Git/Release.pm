@@ -55,10 +55,10 @@ sub strip_remote_names {
 # return branches with ready prefix.
 sub find_ready_branches {
     my $self = shift;
-#     my $ready_prefix = $repo->config('release.ready-prefix') || 'ready-';
-#     my @branches = $self->get_all_branches;
-#     my @ready_branches = grep /$ready_prefix/, @branches;
-#     return @ready_branches;
+    my $ready_prefix = $self->config->ready_prefix;
+    my @branches = $self->get_all_branches;
+    my @ready_branches = grep /$ready_prefix/, @branches;
+    return @ready_branches;
 }
 
 
