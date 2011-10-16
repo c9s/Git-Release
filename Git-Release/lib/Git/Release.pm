@@ -9,14 +9,23 @@ use Git;
 use Getopt::Long;
 use List::MoreUtils qw(uniq);
 use DateTime;
+use Git::Release::Config;
+
+has working_dir => ( );
 
 has repo => (  );
+
+has config => ( );
 
 sub new {
     my ($class,%args) = @_;
     my $self = bless {} ,$class;
-    my $repo = Git->repository ( WorkingSubdir => $args{working_dir} || getcwd() );
+
+    my $working_dir = $args{working_dir} || getcwd();
+    my $repo = Git->repository( WorkingSubdir => $working_dir );
     $self->repo( $repo );
+    $self->working_dir( $working_dir );
+    $self->config( Git::Release::Config->new( repo => $repo )  );
     return $self;
 }
 
@@ -38,12 +47,19 @@ sub get_local_branches {
            $repo->command( 'branch' , '-l' );
 }
 
+sub strip_remote_names { 
+    my $self = shift; 
+    map { s/remotes\/.*?\///; $_ } @_;
+}
 
-
-
-
-
-
+# return branches with ready prefix.
+sub find_ready_branches {
+    my $self = shift;
+#     my $ready_prefix = $repo->config('release.ready-prefix') || 'ready-';
+#     my @branches = $self->get_all_branches;
+#     my @ready_branches = grep /$ready_prefix/, @branches;
+#     return @ready_branches;
+}
 
 
 
