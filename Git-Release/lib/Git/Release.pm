@@ -11,7 +11,7 @@ use List::MoreUtils qw(uniq);
 use DateTime;
 use Git::Release::Config;
 
-has working_dir => ( );
+has directory => ( );
 
 has repo => (  );
 
@@ -20,11 +20,11 @@ has config => ( );
 sub new {
     my ($class,%args) = @_;
     my $self = bless {} ,$class;
+    my $dir = $args{directory} || getcwd();
 
-    my $working_dir = $args{working_dir} || getcwd();
-    my $repo = Git->repository( WorkingSubdir => $working_dir );
+    my $repo = Git->repository( Directory => $dir );
     $self->repo( $repo );
-    $self->working_dir( $working_dir );
+    $self->directory( $dir );
     $self->config( Git::Release::Config->new( repo => $repo )  );
     return $self;
 }

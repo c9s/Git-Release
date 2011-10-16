@@ -7,11 +7,22 @@ use Git::Release::Config;
 use Git::Release::Branch;
 use File::Path qw(rmtree);
 
-mkdir 'test_repo' unless -e 'test_repo';
+rmtree [ 'test_repo' ] if -e 'test_repo';
+mkdir 'test_repo';
 chdir 'test_repo';
 
+Git::command('init');
+
 my $re = Git::Release->new;
-$re->repo->command( 'init' );
+diag 'Testing Path: ' . $re->repo->wc_path;
+
+open FH , ">" , 'README';
+print FH "README";
+close FH;
+$re->repo->command( 'add' , 'README' );
+$re->repo->command( 'commit' , 'README' , '-m' , '"Commit"' );
+
+
 
 ok( $re );
 ok( $re->repo );
@@ -38,17 +49,20 @@ is( 'Git' , ref( $re->config->repo ) , 'is Git');
 
 
 
+
 {
     my $branch = Git::Release::Branch->new( ref => 'test', manager => $re );
     ok( $branch , 'branch ok' );
-
     is( $branch->name , 'test' , 'branch name' );
-
     $branch->create( from => 'master' );
     ok( $branch->is_local );
 
     my $new_name = $branch->move_to_ready;
-    ok( $new_name , $new_name );
+    is( 'ready/test' , $new_name );
+
+    $new_name = $branch->move_to_released;
+    is( 'released/test' , $new_name );
+
     $branch->remove;
 }
 
