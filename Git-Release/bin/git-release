@@ -124,9 +124,10 @@ SKIP_VERSION:
         say 'Updating remote refs...';
         update_remote_refs $repo;
 
-
         say "Creating release branch from $develop_branch";
         $repo->command( 'checkout' , '-b' , $new_release , $develop_branch );
+
+
 
 
         # merge all ready branches
