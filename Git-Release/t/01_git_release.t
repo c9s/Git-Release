@@ -52,9 +52,6 @@ is( 'Git' , ref( $re->config->repo ) , 'is Git');
 }
 
 
-
-
-
 {
     my $branch = Git::Release::Branch->new( ref => 'test', manager => $re );
     ok( $branch , 'branch ok' );

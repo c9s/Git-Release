@@ -36,6 +36,9 @@ sub remote_name {
     }
 }
 
+
+
+
 sub create {
     my ($self,%args) = @_;
     my $from = $args{from} || 'master';
@@ -50,6 +53,17 @@ sub remove {
         $self->manager->repo->command( 'push' , $self->remote_name , ':' . $self->name );
     }
 }
+
+
+# if self is a local branch, we can check if it has a remote branch
+sub remove_remote_branches {
+    my $self = shift;
+    my @remotes = split /\n/,$self->manager->repo->command( 'remote' );
+    for ( @remotes ) {
+        $self->manager->repo->command( 'push' , $_ , '--delete' , $self->name );
+    }
+}
+
 
 sub move_to_ready {
     my $self = shift;
