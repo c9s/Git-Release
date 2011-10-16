@@ -61,6 +61,16 @@ sub find_ready_branches {
     return @ready_branches;
 }
 
+sub update_remote_refs {
+    my $self = shift; 
+    $self->repo->command(qw(remote update --prune));
+    $self->repo->command(qw(fetch --all --prune));
+}
+
+
+
+
+
 
 
 
