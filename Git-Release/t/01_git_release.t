@@ -37,6 +37,13 @@ ok( $re->config );
 ok( $re->config->repo , 'Repository object' );
 is( 'Git' , ref( $re->config->repo ) , 'is Git');
 
+
+ok( ! $re->has_develop_branch , 'no dev branch' );
+my $dev_branch;
+ok( $dev_branch = $re->create_develop_branch );
+ok( $re->has_develop_branch , 'found dev branch' );
+
+
 {
     my $branch = Git::Release::Branch->new( ref => 'test', manager => $re );
     ok( $branch , 'branch ok' );
@@ -67,6 +74,9 @@ is( 'Git' , ref( $re->config->repo ) , 'is Git');
 
     $branch->remove;
 }
+
+
+
 
 
 chdir '..';

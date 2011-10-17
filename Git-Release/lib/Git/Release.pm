@@ -32,20 +32,20 @@ sub new {
 
 # list all remote, all local branches
 sub get_all_branches {
-    my $repo = shift;
+    my $self = shift;
 
     # remove remtoes names, strip star char.
     return uniq 
             map { chomp; $_; } 
             map { s/^\*?\s*//; $_; } 
-                $repo->command( 'branch' , '-a' );
+                $self->repo->command( 'branch' , '-a' );
 }
 
 sub get_local_branches {
-    my $repo = shift;
+    my $self = shift;
     return map { chomp; $_; } 
            map { s/^\*?\s*//; $_; } 
-           $repo->command( 'branch' , '-l' );
+           $self->repo->command( 'branch' , '-l' );
 }
 
 sub strip_remote_names { 
@@ -75,6 +75,9 @@ sub new_branch {
     return $branch;
 }
 
+
+
+
 sub has_develop_branch {
     my $self = shift;
     my $dev_branch_name = $self->config->develop_branch;
@@ -86,13 +89,13 @@ sub has_develop_branch {
     return undef;
 }
 
-
 sub create_develop_branch {
     my $self = shift;
     my $name = $self->config->develop_branch;
-    $self->new_branch( ref => $name )->create( from => 'master' );
+    my $branch = $self->new_branch( ref => $name );
+    $branch->create( from => 'master' );
+    return $branch;
 }
-
 
 1;
 __END__
