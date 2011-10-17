@@ -43,7 +43,6 @@ my $dev_branch;
 ok( $dev_branch = $re->create_develop_branch );
 ok( $re->has_develop_branch , 'found dev branch' );
 
-
 {
     my $branch = Git::Release::Branch->new( ref => 'test', manager => $re );
     ok( $branch , 'branch ok' );

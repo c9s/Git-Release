@@ -54,12 +54,26 @@ sub strip_remote_names {
 }
 
 # return branches with ready prefix.
-sub find_ready_branches {
+sub get_ready_branches {
     my $self = shift;
-    my $ready_prefix = $self->config->ready_prefix;
+    my $prefix = $self->config->ready_prefix;
     my @branches = $self->get_all_branches;
-    my @ready_branches = grep /$ready_prefix/, @branches;
+    my @ready_branches = grep /$prefix/, @branches;
     return @ready_branches;
+}
+
+sub get_release_branches {
+    my $self = shift;
+    my $prefix = $self->config->release_prefix;
+    my @branches = $self->get_all_branches;
+    my @release_branches = sort grep /$prefix/, @branches;
+    return @release_branches;  # release branch not found.
+}
+
+sub get_remotes {
+    my $self = shift;
+    my @remotes = split /\n/,$self->repo->command('remote');
+    return @remotes;
 }
 
 sub update_remote_refs {

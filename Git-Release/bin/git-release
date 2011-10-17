@@ -89,17 +89,13 @@ given ( $action )
         $release->update_remote_refs;
 
         # do we have branches ?
-        if( grep /\/?develop/,@branches ) {
+        if( $release->has_develop_branch ) {
             say 'Development branch found.';
         }
         else {
             say 'Creating develop branch';
-            $release->create_develop_branch;
-
-            say 'Pushing to remotes';
-            for my $remote ( split /\n/,$repo->command('remote') ) {
-                $repo->command( 'push' , $remote , $develop_branch );
-            }
+            my $branch = $release->create_develop_branch;
+            $branch->push_to_remotes;
         }
         say 'Done';
     }

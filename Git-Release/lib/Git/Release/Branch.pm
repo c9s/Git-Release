@@ -100,4 +100,15 @@ sub move_to_released {
     }
 }
 
+sub push_to {
+    my ($self,$remote) = @_;
+    $self->manager->repo->command( 'push' , $remote , $self->name );
+}
+
+sub push_to_remotes {
+    my $self = shift;
+    my @remotes = $self->manager->get_remotes;
+    $fself->push_to($_) for @remotes;
+}
+
 1;
