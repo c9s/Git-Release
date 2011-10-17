@@ -10,12 +10,19 @@ has manager => ();
 sub name {
     my $self = shift;
     if( $self->is_remote ) {
-        my ($name) = ( $self->ref =~ /\/?(.*?)$/ );
-        return $name;
+        my $ref = $self->strip_remote_prefix( $self->ref );
+        return $ref;
     }
     else {
         return $self->ref;
     }
+}
+
+sub strip_remote_prefix {
+    my ($self,$ref) = @_;
+    my $new = $ref;
+    $new =~ s{^remotes\/.*?\/}{};
+    return $new;
 }
 
 sub is_local {
@@ -63,7 +70,6 @@ sub remove_remote_branches {
         $self->manager->repo->command( 'push' , $_ , '--delete' , $self->name );
     }
 }
-
 
 sub move_to_ready {
     my $self = shift;

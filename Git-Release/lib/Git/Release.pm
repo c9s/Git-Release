@@ -10,6 +10,7 @@ use Getopt::Long;
 use List::MoreUtils qw(uniq);
 use DateTime;
 use Git::Release::Config;
+use Git::Release::Branch;
 
 has directory => ( );
 
@@ -49,7 +50,7 @@ sub get_local_branches {
 
 sub strip_remote_names { 
     my $self = shift; 
-    map { s/remotes\/.*?\///; $_ } @_;
+    map { s{^remotes\/.*?\/}{}; $_ } @_;
 }
 
 # return branches with ready prefix.
@@ -67,11 +68,31 @@ sub update_remote_refs {
     $self->repo->command(qw(fetch --all --prune));
 }
 
+sub new_branch {
+    my ( $self, %args ) = @_;
+    my $branch = Git::Release::Branch->new(  
+            %args, manager => $self );
+    return $branch;
+}
+
+sub has_develop_branch {
+    my $self = shift;
+    my $dev_branch_name = $self->config->develop_branch;
+    my @branches = $self->get_all_branches;
+    for my $branch ( @branches ) {
+        my $branch = $self->new_branch( ref => $branch );
+        return 1 if $branch->name eq $dev_branch_name;
+    }
+    return undef;
+}
+
+
 sub create_develop_branch {
     my $self = shift;
     my $name = $self->config->develop_branch;
-    $self->repo->command( 'branch' , $name , 'master' );
+    $self->new_branch( ref => $name )->create( from => 'master' );
 }
+
 
 1;
 __END__
@@ -86,7 +107,7 @@ Git::Release -
 
 =head1 DESCRIPTION
 
-Git::Release is
+Git::Release is a release manager for Git. It includes the basic concepts of git workflow.
 
 =head1 AUTHOR
 
