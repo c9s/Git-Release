@@ -88,7 +88,8 @@ sub rebase_from {
     if( ! ref($from) ) {
         $from = $self->manager->_new_branch( ref => $from );
     }
-    $self->manager->repo->command( 'rebase' , $from->name , $self->name );
+    my @ret = $self->manager->repo->command( 'rebase' , $from->name , $self->name );
+    return @ret;
 }
 
 sub push_to {
