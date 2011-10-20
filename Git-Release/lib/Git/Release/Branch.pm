@@ -83,6 +83,14 @@ sub merge {
     return @ret;
 }
 
+sub rebase_from {
+    my ($self,$from) = @_;
+    if( ! ref($from) ) {
+        $from = $self->manager->_new_branch( ref => $from );
+    }
+    $self->manager->repo->command( 'rebase' , $from->name , $self->name );
+}
+
 sub push_to {
     my ($self,$remote) = @_;
     $self->manager->repo->command( 'push' , $remote , $self->name );
