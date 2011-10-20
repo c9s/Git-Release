@@ -147,7 +147,7 @@ sub create_feature_branch {
     my ($self,$bname,$ref) = @_;
     my $prefix = $self->config->feature_prefix;
     my $b = $self->_new_branch( ref => $prefix . $bname );
-    $b->create( from => $ref );
+    $b->create( from => $ref || $self->config->develop_branch );
     $b->checkout;
 }
 
