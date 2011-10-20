@@ -20,13 +20,9 @@ unless($target =~ m/^@{[ $manager->config->ready_prefix ]}/ ) {
 }
 
 my $cb = $manager->get_current_branch;
-my @rbs = $manager->get_release_branches;
-my ($rb) = grep { $_->is_local } @rbs;
-unless( $rb ) {
-    ($rb) = grep { $_->is_remote } @rbs;
-}
+
 say "Checking out release branch to merge ready branch...";
-$rb->checkout;
+$manager->checkout_release_branch;
 
 # try to merge
 say "Merging branch @{[ $cb->name ]} ...";

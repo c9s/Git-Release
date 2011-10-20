@@ -105,6 +105,15 @@ sub _new_branch {
 }
 
 
+sub checkout_release_branch {
+    my $self = shift;
+    my @rbs = $self->get_release_branches;
+    my ($rb) = grep { $_->is_local } @rbs;
+    unless( $rb ) {
+        ($rb) = grep { $_->is_remote } @rbs;
+    }
+    return $rb->checkout;
+}
 
 
 sub has_develop_branch {

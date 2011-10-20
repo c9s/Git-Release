@@ -4,7 +4,8 @@ use strict;
 
 =pod
 
-Merge ready branches to current branches
+Merge ready branches to the release branches
 
 =cut
+
 
