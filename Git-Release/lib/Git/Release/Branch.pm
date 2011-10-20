@@ -65,7 +65,6 @@ sub remove {
     }
 }
 
-
 # Remove remote tracking branches
 # if self is a local branch, we can check if it has a remote branch
 sub remove_remote_branches {
