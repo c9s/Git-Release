@@ -114,7 +114,13 @@ sub checkout_release_branch {
     unless( $rb ) {
         ($rb) = grep { $_->is_remote } @rbs;
     }
-    return $rb->checkout;
+
+    unless ($rb) {
+        die 'Release branch not found.';
+    }
+
+    $rb->checkout;
+    return $rb;
 }
 
 

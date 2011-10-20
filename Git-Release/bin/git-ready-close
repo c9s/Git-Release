@@ -22,7 +22,7 @@ unless($target =~ m/^@{[ $manager->config->ready_prefix ]}/ ) {
 my $cb = $manager->get_current_branch;
 
 say "Checking out release branch to merge ready branch...";
-$manager->checkout_release_branch;
+my $rb = $manager->checkout_release_branch;
 
 # try to merge
 say "Merging branch @{[ $cb->name ]} ...";
