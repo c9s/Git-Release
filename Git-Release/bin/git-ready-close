@@ -5,25 +5,34 @@ use feature 'say';
 use lib '/Users/c9s/git/work/GitTools/git-release/Git-Release/lib';
 use Git::Release;
 
-$|++;
-say "Closing ready branch";
-
 my $manager = Git::Release->new;
-my @branches = $manager->get_ready_branches;
+$|++;
+my $target = shift;
 
-
-say "Found " , scalar(@branches) , " ready branches.";
-
-for my $b ( @branches ) {
-
-    if( $b->is_remote ) {
-        say '==> Found remote branch: ' , $b->name , ' from ' , $b->remote_name;
-    } else {
-        say '==> Found local branch: ' , $b->name;
-    }
-    say 'Removing branch: ' . $b->name;
-    $b->remove;
-
+unless ( $target ) {
+    $target = $manager->get_current_branch->name;
 }
+
+unless($target =~ m/^@{[ $manager->config->ready_prefix ]}/ ) {
+    say "Branch $target is not a ready branch.";
+    say "Your ready prefix is: " , $manager->config->ready_prefix;
+    exit(0);
+}
+
+my $cb = $manager->get_current_branch;
+my @rbs = $manager->get_release_branches;
+my ($rb) = grep { $_->is_local } @rbs;
+unless( $rb ) {
+    ($rb) = grep { $_->is_remote } @rbs;
+}
+say "Checking out release branch to merge ready branch...";
+$rb->checkout;
+
+# try to merge
+say "Merging branch @{[ $cb->name ]} ...";
+$rb->merge( $cb );
+
+say "Removing branch";
+$cb->remove;
 
 say "Done";

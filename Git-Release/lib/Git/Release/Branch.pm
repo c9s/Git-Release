@@ -71,7 +71,7 @@ sub remove {
 # if self is a local branch, we can check if it has a remote branch
 sub remove_remote_branches {
     my $self = shift;
-    my @remotes = split /\n/,$self->manager->repo->command( 'remote' );
+    my @remotes = $self->manager->repo->command( 'remote' );
     for ( @remotes ) {
         $self->manager->repo->command( 'push' , $_ , '--delete' , $self->name );
     }
@@ -87,6 +87,24 @@ sub move_to_ready {
         $self->ref( $new_name );
         return $new_name;
     }
+}
+
+sub checkout {
+    my $self = shift;
+    my @ret;
+    if( $self->is_local ) {
+        @ret = $self->manager->repo->command( 'checkout' , $self->name );
+    } else {
+        # checkout a remote tracking branch
+        @ret = $self->manager->repo->command( 'checkout' , '-b' , '-t' , $self->name , $self->ref );
+    }
+    return @ret;
+}
+
+sub merge {
+    my ($self,$b) = @_;
+    my @ret = $self->manager->repo->command( 'merge' , $b->ref );
+    return @ret;
 }
 
 sub move_to_released {
