@@ -33,6 +33,10 @@ ok( $re );
 ok( $re->repo );
 is( 'Git', ref( $re->repo ) );
 
+ok( $re->get_current_branch );
+is( 'master', $re->get_current_branch->name );
+ok( 'master', $re->get_current_branch->ref );
+
 ok( $re->config );
 ok( $re->config->repo , 'Repository object' );
 is( 'Git' , ref( $re->config->repo ) , 'is Git');
@@ -73,6 +77,8 @@ ok( $re->has_develop_branch , 'found dev branch' );
 
     $branch->remove;
 }
+
+
 
 
 

@@ -53,6 +53,14 @@ sub list_local_branches {
            $self->repo->command( 'branch' , '-l' );
 }
 
+sub get_current_branch {
+    my $self = shift;
+    my $result = $self->repo->command('rev-parse','--abbrev-ref','HEAD');
+    chomp( $result );
+    return $self->_new_branch( ref => $result );
+}
+
+
 # return branches with ready prefix.
 sub get_ready_branches {
     my $self = shift;
