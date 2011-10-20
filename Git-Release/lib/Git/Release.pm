@@ -130,7 +130,7 @@ sub has_develop_branch {
     my @branches = $self->list_all_branches;
     for my $branch ( @branches ) {
         my $branch = $self->_new_branch( ref => $branch );
-        return 1 if $branch->name eq $dev_branch_name;
+        return $branch if $branch->name eq $dev_branch_name;
     }
     return undef;
 }
