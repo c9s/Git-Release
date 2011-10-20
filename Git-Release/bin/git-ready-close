@@ -32,7 +32,7 @@ $rb->checkout;
 say "Merging branch @{[ $cb->name ]} ...";
 $rb->merge( $cb );
 
-say "Removing branch";
+say "Removing ready branch @{[ $cb->name ]} ...";
 $cb->remove;
 
 say "Done";

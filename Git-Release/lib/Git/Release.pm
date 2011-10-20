@@ -46,6 +46,13 @@ sub list_all_branches {
                 $self->repo->command( 'branch' , '-a' );
 }
 
+sub list_remote_branches {
+    my $self = shift;
+    return map { chomp; $_; } 
+           map { s/^\*?\s*//; $_; } 
+           $self->repo->command( 'branch' , '-r' );
+}
+
 sub list_local_branches {
     my $self = shift;
     return map { chomp; $_; } 

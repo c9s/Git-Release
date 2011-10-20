@@ -77,14 +77,20 @@ sub remove_remote_branches {
     }
 }
 
+
 sub move_to_ready {
     my $self = shift;
+
     if( $self->is_local ) {
         my $name = $self->name;
         return if $name =~ $self->manager->config->ready_prefix;
+
+        $self->remove_remote_branches;
+
         my $new_name = $self->manager->config->ready_prefix . $name;
         $self->manager->repo->command( 'branch' , '-m' , $name , $new_name );
         $self->ref( $new_name );
+        $self->push_to_remotes;
         return $new_name;
     }
 }
