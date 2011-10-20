@@ -53,7 +53,6 @@ sub create {
 }
 
 
-
 # options:
 #
 #    ->remove( force => 1 );
@@ -71,9 +70,15 @@ sub remove {
 # if self is a local branch, we can check if it has a remote branch
 sub remove_remote_branches {
     my $self = shift;
+    my $name = $self->name;
     my @remotes = $self->manager->repo->command( 'remote' );
-    for ( @remotes ) {
-        $self->manager->repo->command( 'push' , $_ , '--delete' , $self->name );
+    my @rbs = $self->manager->list_remote_branches;
+
+    for my $remote ( @remotes ) {
+        # has tracking branch at remote ?
+        if( grep m{$remote/$name},@rbs ) {
+            $self->manager->repo->command( 'push' , $remote , '--delete' , $self->name );
+        }
     }
 }
 
@@ -88,7 +93,7 @@ sub move_to_ready {
         $self->remove_remote_branches;
 
         my $new_name = $self->manager->config->ready_prefix . $name;
-        $self->manager->repo->command( 'branch' , '-m' , $name , $new_name );
+        $self->manager->repo->command( 'branch' , '-m' , $new_name );
         $self->ref( $new_name );
         $self->push_to_remotes;
         return $new_name;

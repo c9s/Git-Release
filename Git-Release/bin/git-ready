@@ -21,7 +21,6 @@ my $cb = $manager->get_current_branch;
 $cb->move_to_ready;
 
 
-
 __END__
 # my $version = Git::command_oneline('version');
 my $working_dir = getcwd();
