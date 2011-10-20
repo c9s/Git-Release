@@ -141,9 +141,13 @@ sub move_to_released {
         my $new_name = $name;
         $new_name =~ s{^.*/}{};
         $new_name = $released_prefix . $new_name;
+
+        $self->remove_remote_branches;
+
         $self->manager->repo->command( 'branch' , '-m' , $name 
                 , $new_name );
         $self->ref( $new_name );
+        $self->push_to_remotes;
         return $new_name;
     }
 }

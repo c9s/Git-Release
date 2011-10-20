@@ -28,7 +28,7 @@ $manager->checkout_release_branch;
 say "Merging branch @{[ $cb->name ]} ...";
 $rb->merge( $cb );
 
-say "Removing ready branch @{[ $cb->name ]} ...";
-$cb->remove;
+say "Moving to released/...";
+$cb->move_to_released;
 
 say "Done";
