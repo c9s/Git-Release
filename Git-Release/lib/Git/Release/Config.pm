@@ -20,6 +20,11 @@ sub release_prefix {
     return $self->repo->config('release.release-prefix') || 'release-'; 
 }
 
+sub feature_prefix {
+    my $self = shift;
+    return $self->repo->config('release.release-prefix') || 'feature-'; 
+}
+
 sub develop_branch {
     my $self = shift;
     return $self->repo->config('release.develop-branch') || 'develop';

@@ -6,3 +6,8 @@ use Git::Release;
 my $manager = Git::Release->new;
 $|++;
 
+my $branch = shift;
+my $ref = shift;
+exit unless $branch;
+$manager->create_feature_branch( $branch , $ref );
+say 'Done';

@@ -105,6 +105,8 @@ sub _new_branch {
 }
 
 
+
+
 sub checkout_release_branch {
     my $self = shift;
     my @rbs = $self->get_release_branches;
@@ -133,6 +135,14 @@ sub create_develop_branch {
     my $branch = $self->_new_branch( ref => $name );
     $branch->create( from => 'master' );
     return $branch;
+}
+
+sub create_feature_branch {
+    my ($self,$bname,$ref) = @_;
+    my $prefix = $self->config->feature_prefix;
+    my $b = $self->_new_branch( ref => $prefix . $bname );
+    $b->create( from => $ref );
+    $b->checkout;
 }
 
 1;
