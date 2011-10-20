@@ -9,5 +9,7 @@ $|++;
 my $branch = shift;
 my $ref = shift;
 exit unless $branch;
-$manager->create_feature_branch( $branch , $ref );
+my $b = $manager->create_feature_branch( $branch , $ref );
+$b->checkout();
+$b->push_to_remotes;
 say 'Done';
