@@ -30,8 +30,13 @@ sub new {
     return $self;
 }
 
+sub strip_remote_names { 
+    my $self = shift; 
+    map { s{^remotes\/.*?\/}{}; $_ } @_;
+}
+
 # list all remote, all local branches
-sub get_all_branches {
+sub list_all_branches {
     my $self = shift;
 
     # remove remtoes names, strip star char.
@@ -41,33 +46,28 @@ sub get_all_branches {
                 $self->repo->command( 'branch' , '-a' );
 }
 
-sub get_local_branches {
+sub list_local_branches {
     my $self = shift;
     return map { chomp; $_; } 
            map { s/^\*?\s*//; $_; } 
            $self->repo->command( 'branch' , '-l' );
 }
 
-sub strip_remote_names { 
-    my $self = shift; 
-    map { s{^remotes\/.*?\/}{}; $_ } @_;
-}
-
 # return branches with ready prefix.
 sub get_ready_branches {
     my $self = shift;
     my $prefix = $self->config->ready_prefix;
-    my @branches = $self->get_all_branches;
+    my @branches = $self->list_all_branches;
     my @ready_branches = grep /$prefix/, @branches;
-    return @ready_branches;
+    return map { $self->_new_branch( ref => $_ ) } @ready_branches;
 }
 
 sub get_release_branches {
     my $self = shift;
     my $prefix = $self->config->release_prefix;
-    my @branches = $self->get_all_branches;
+    my @branches = $self->list_all_branches;
     my @release_branches = sort grep /$prefix/, @branches;
-    return @release_branches;  # release branch not found.
+    return map { $self->_new_branch( ref => $_ ) } @release_branches;  # release branch not found.
 }
 
 sub get_remotes {
@@ -82,7 +82,7 @@ sub update_remote_refs {
     $self->repo->command(qw(fetch --all --prune));
 }
 
-sub new_branch {
+sub _new_branch {
     my ( $self, %args ) = @_;
     my $branch = Git::Release::Branch->new(  
             %args, manager => $self );
@@ -95,9 +95,9 @@ sub new_branch {
 sub has_develop_branch {
     my $self = shift;
     my $dev_branch_name = $self->config->develop_branch;
-    my @branches = $self->get_all_branches;
+    my @branches = $self->list_all_branches;
     for my $branch ( @branches ) {
-        my $branch = $self->new_branch( ref => $branch );
+        my $branch = $self->_new_branch( ref => $branch );
         return 1 if $branch->name eq $dev_branch_name;
     }
     return undef;
@@ -106,7 +106,7 @@ sub has_develop_branch {
 sub create_develop_branch {
     my $self = shift;
     my $name = $self->config->develop_branch;
-    my $branch = $self->new_branch( ref => $name );
+    my $branch = $self->_new_branch( ref => $name );
     $branch->create( from => 'master' );
     return $branch;
 }

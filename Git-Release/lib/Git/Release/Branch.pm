@@ -52,16 +52,22 @@ sub create {
     $self->manager->repo->command( 'branch' , $self->ref , 'master' );
 }
 
+
+
+# options:
+#
+#    ->remove( force => 1 );
 sub remove {
     my ($self,%args) = @_;
     if( $self->is_local ) {
-        $self->manager->repo->command( 'branch' , '-d' , $self->ref );
+        $self->manager->repo->command( 'branch' , $args{force} ? '-D' : '-d' , $self->ref );
     } elsif( $self->is_remote ) {
         $self->manager->repo->command( 'push' , $self->remote_name , ':' . $self->name );
     }
 }
 
 
+# Remove remote tracking branches
 # if self is a local branch, we can check if it has a remote branch
 sub remove_remote_branches {
     my $self = shift;
@@ -108,7 +114,7 @@ sub push_to {
 sub push_to_remotes {
     my $self = shift;
     my @remotes = $self->manager->get_remotes;
-    $fself->push_to($_) for @remotes;
+    $self->push_to($_) for @remotes;
 }
 
 1;

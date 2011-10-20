@@ -1,0 +1,30 @@
+#!/usr/bin/env perl
+use warnings;
+use strict;
+use feature 'say';
+use lib '/Users/c9s/git/work/GitTools/git-release/Git-Release/lib';
+use Git::Release;
+
+
+$|++;
+say "Closing ready branches...";
+
+my $manager = Git::Release->new;
+my @branches = $manager->get_ready_branches;
+
+
+say "Found " , scalar(@branches) , " ready branches.";
+
+for my $b ( @branches ) {
+
+    if( $b->is_remote ) {
+        say '==> Found remote branch: ' , $b->name , ' from ' , $b->remote_name;
+    } else {
+        say '==> Found local branch: ' , $b->name;
+    }
+    say 'Removing branch: ' . $b->name;
+    $b->remove;
+
+}
+
+say "Done";
