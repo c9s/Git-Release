@@ -166,6 +166,8 @@ sub move_to_released {
 sub get_doc_path {
     my $self = shift;
     my $docname = $self->name;
+    return if $self->name eq 'HEAD';
+
     $docname =~ s/^@{[ $self->manager->config->released_prefix ]}//;
     $docname =~ s/^@{[ $self->manager->config->ready_prefix ]}//;
 
@@ -201,6 +203,9 @@ END
 sub init_doc {
     my $self = shift;
     my $doc_path = $self->get_doc_path;
+    return unless $doc_path;
+
+
     print "Initializing branch documentation.\n";
     open my $fh , ">" , $doc_path;
     print $fh $self->default_doc_template;
@@ -211,6 +216,7 @@ sub init_doc {
 sub edit_doc {
     my $self = shift;
     my $doc_path = $self->get_doc_path;
+    return unless $doc_path;
 
     # XXX:
     # launch editor to edit doc
@@ -219,6 +225,7 @@ sub edit_doc {
 sub print_doc {
     my $self = shift;
     my $doc_path = $self->get_doc_path;
+    return unless $doc_path;
 
     print "Branch doc path: $doc_path\n";
 
