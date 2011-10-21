@@ -1,7 +1,15 @@
 
-# Git Release
+Git Release
+===========
+
 
 Git release process flow helper scripts.
+
+# Setup
+
+    git release-init
+
+# Concept
 
 ## The main branches
 
@@ -46,6 +54,12 @@ To create a feature branch from a branch:
 This will create a feature branch with prefix `feature-`, you can configure the prefix in your `.gitconfig` file.
 
 A branch named like `feature-ajax` will be created.
+
+
+To show the document of a branch:
+
+    $ git branch-doc
+
 
 
 ### Hotfix Branch
@@ -157,6 +171,5 @@ http://reinh.com/blog/2009/03/02/a-git-workflow-for-agile-teams.html
 
 * ticket integration.
 * config integration.
-
 
 (Comments are welcome)

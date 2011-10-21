@@ -133,7 +133,7 @@ sub checkout_release_branch {
     my $self = shift;
     my @rbs = $self->get_release_branches;
     my ($rb) = grep { $_->is_local } @rbs;
-    unless( $rb ) {
+    unless ($rb) {
         ($rb) = grep { $_->is_remote } @rbs;
     }
 
@@ -144,7 +144,6 @@ sub checkout_release_branch {
     $rb->checkout;
     return $rb;
 }
-
 
 sub find_branch {
     my ( $self, $name ) = @_;
