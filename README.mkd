@@ -43,6 +43,10 @@ To create a feature branch from a branch:
 
     $ git feature [feature name] [your branch]
 
+This will create a feature branch with prefix `feature-`, you can configure the prefix in your `.gitconfig` file.
+
+A branch named like `feature-ajax` will be created.
+
 
 ### Hotfix Branch
 
@@ -53,12 +57,12 @@ Must merge back to `develop` and `master`.
 
 To create a hotfix branch from master:
 
-    $ git hotfix new [hotfix name]
+    $ git hotfix [hotfix name]
 
 This is not recommended, but you can still create a hotfix branch from a specified branch, 
 if your production branch is not named master,
 
-    $ git hotfix new [hotfix name] your_branch
+    $ git hotfix [hotfix name] your_branch
 
 
 ### Release Ready Branch
