@@ -1,0 +1,6 @@
+#!/usr/bin/env perl
+use 5.12.0;
+use Git::Release;
+$|++;
+my $manager = Git::Release->new;
+$manager->install_hooks;
