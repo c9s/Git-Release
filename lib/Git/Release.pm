@@ -36,6 +36,10 @@ sub strip_remote_names {
 }
 
 # list all remote, all local branches
+# contains 
+#    local-branch
+#    remotes/origin/branch_name
+
 sub list_all_branches {
     my $self = shift;
 
@@ -88,8 +92,6 @@ sub get_release_branches {
 sub install_hooks {
     my $self = shift;
     my $repo_path = $self->repo->repo_path;
-
-
 
     my $checkout_hook = File::Spec->join( $repo_path , 'hooks' , 'post-checkout' );
     print "$checkout_hook\n";
@@ -144,22 +146,36 @@ sub checkout_release_branch {
 }
 
 
-sub has_develop_branch {
-    my $self = shift;
-    my $dev_branch_name = $self->config->develop_branch;
+sub find_branch {
+    my ( $self, $name ) = @_;
     my @branches = $self->list_all_branches;
-    for my $branch ( @branches ) {
-        my $branch = $self->_new_branch( ref => $branch );
-        return $branch if $branch->name eq $dev_branch_name;
+    for my $ref ( @branches ) {
+        my $branch = $self->_new_branch( ref => $ref );
+        return $branch if $branch->name eq $name;
     }
-    return undef;
 }
 
-sub create_develop_branch {
+sub find_develop_branch {
+    my $self = shift;
+    my $dev_branch_name = $self->config->develop_branch;
+    return $self->find_branch( $dev_branch_name );
+}
+
+# checkout or create develop branch
+sub checkout_develop_branch {
     my $self = shift;
     my $name = $self->config->develop_branch;
-    my $branch = $self->_new_branch( ref => $name );
-    $branch->create( from => 'master' );
+
+    my $branch;
+    $branch = $self->find_branch( $name );
+
+    # if branch found, we should check it out
+    if ( $branch ) {
+        $branch->checkout;
+    } else {
+        $branch = $self->_new_branch( ref => $name );
+        $branch->create( from => 'master' );
+    }
     return $branch;
 }
 
