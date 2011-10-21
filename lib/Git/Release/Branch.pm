@@ -176,16 +176,16 @@ sub get_doc_path {
     return File::Spec->join( $dir , "$docname.$ext" );
 }
 
-sub init_doc {
+sub default_doc_template {
     my $self = shift;
-    my $doc_path = $self->get_doc_path;
-    open my $fh , ">" , $doc_path;
-    print $fh <<"END";
+    return <<"END";
 @{[ $self->name ]}
 ==================
 
 Target
 ------
+* target1
+* target2
 
 Current Status
 --------------
@@ -196,7 +196,16 @@ Known Issues
 
 
 END
+}
+
+sub init_doc {
+    my $self = shift;
+    my $doc_path = $self->get_doc_path;
+    print "Initializing branch documentation.\n";
+    open my $fh , ">" , $doc_path;
+    print $fh $self->default_doc_template;
     close $fh;
+    print "Done.\n";
 }
 
 sub print_doc {
@@ -207,7 +216,8 @@ sub print_doc {
 
     # doc doesn't exists
     unless(-e $doc_path ){
-        print "Branch doc $doc_path not found, please write one.\n";
+        print "Branch doc $doc_path not found.\n";
+        $self->init_doc;
         return;
     }
 
