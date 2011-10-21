@@ -2,7 +2,7 @@ use inc::Module::Install;
 name 'Git-Release';
 all_from 'lib/Git/Release.pm';
 
-# requires '';
+requires 'Git';
 
 tests 't/*.t';
 # author_tests 'xt';
