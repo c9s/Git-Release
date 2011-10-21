@@ -2,6 +2,7 @@ package Git::Release::Config;
 use warnings;
 use strict;
 use Mo;
+use File::Spec;
 
 has repo => ();
 
@@ -29,5 +30,17 @@ sub develop_branch {
     my $self = shift;
     return $self->repo->config('release.develop-branch') || 'develop';
 }
+
+sub branch_doc_ext {
+    my $self = shift;
+    return $self->repo->config('release.branch-doc-ext') || 'mkd';
+}
+
+sub branch_doc_path {
+    my $self = shift;
+    return $self->repo->config('release.branch-doc-dir') || File::Spec->join('docs','branches');
+}
+
+
 
 1;

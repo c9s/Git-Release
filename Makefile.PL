@@ -5,7 +5,7 @@ all_from 'lib/Git/Release.pm';
 requires 'Git';
 
 tests 't/*.t';
-author_tests 'xt';
+# author_tests 'xt';
 # test_requires 'Test::More';
 auto_set_repository;
 

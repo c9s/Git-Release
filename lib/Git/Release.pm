@@ -85,6 +85,24 @@ sub get_release_branches {
     return map { $self->_new_branch( ref => $_ ) } @release_branches;  # release branch not found.
 }
 
+sub install_hooks {
+    my $self = shift;
+    my $repo_path = $self->repo->repo_path;
+
+    my $checkout_hook = File::Spec->join( $repo_path , 'hooks' , 'post-checkout' );
+    open my $fh , ">" , $checkout_hook;
+
+    print $fh <<"END";
+#!/usr/bin/env perl
+use Git::Release;
+my \$m = Git::Release->new; # release manager
+\$m->get_current_branch->print_doc;
+END
+
+    close $fh;
+}
+
+
 sub get_remotes {
     my $self = shift;
 

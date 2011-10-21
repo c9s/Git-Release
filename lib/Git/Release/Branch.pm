@@ -2,6 +2,8 @@ package Git::Release::Branch;
 use warnings;
 use strict;
 use Mo;
+use File::Spec;
+use File::Path qw(mkpath);
 
 has ref => ();
 
@@ -160,6 +162,64 @@ sub move_to_released {
         return $new_name;
     }
 }
+
+sub get_doc_path {
+    my $self = shift;
+    my $docname = $self->name;
+    $docname =~ s/^@{[ $self->manager->config->released_prefix ]}//;
+    $docname =~ s/^@{[ $self->manager->config->ready_prefix ]}//;
+
+    my $ext = $self->manager->config->branch_doc_ext;
+
+    my $dir = $self->manager->config->branch_doc_path;
+    mkpath [ $dir ] if ! -e $dir ;
+    return File::Spec->join( $dir , "$docname.$ext" );
+}
+
+sub init_doc {
+    my $self = shift;
+    my $doc_path = $self->get_doc_path;
+    open my $fh , ">" , $doc_path;
+    print $fh <<"END";
+@{[ $self->name ]}
+==================
+
+Target
+------
+
+Current Status
+--------------
+
+
+Known Issues
+------------
+
+
+END
+    close $fh;
+}
+
+sub print_doc {
+    my $self = shift;
+    my $doc_path = $self->get_doc_path;
+
+    print "Branch doc path: $doc_path\n";
+
+    # doc doesn't exists
+    unless(-e $doc_path ){
+        print "Branch doc $doc_path not found, please write one.\n";
+        return;
+    }
+
+    open my $fh , "<" , $doc_path;
+    local $/;
+    my $content = <$fh>;
+    close $fh;
+    print "===================\n";
+    print $content , "\n";
+    print "===================\n";
+}
+
 
 
 1;
