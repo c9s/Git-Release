@@ -229,13 +229,18 @@ sub print_doc {
         return;
     }
 
-    open my $fh , "<" , $doc_path;
-    local $/;
-    my $content = <$fh>;
-    close $fh;
-    print "===================\n";
-    print $content , "\n";
-    print "===================\n";
+    if($doc_path =~ /\.pod$/) {
+        system("pod2text $doc_path");
+    }
+    else {
+        open my $fh , "<" , $doc_path;
+        local $/;
+        my $content = <$fh>;
+        close $fh;
+        print "===================\n";
+        print $content , "\n";
+        print "===================\n";
+    }
 }
 
 
