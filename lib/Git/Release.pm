@@ -103,7 +103,7 @@ my \$m = Git::Release->new; # release manager
 END
 
     close $fh;
-    chmod 755, $checkout_hook;
+    chmod 0755, $checkout_hook;
 }
 
 sub get_remotes {
