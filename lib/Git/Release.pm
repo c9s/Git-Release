@@ -88,6 +88,9 @@ sub get_release_branches {
 sub install_hooks {
     my $self = shift;
     my $repo_path = $self->repo->repo_path;
+
+
+
     my $checkout_hook = File::Spec->join( $repo_path , 'hooks' , 'post-checkout' );
     print "$checkout_hook\n";
     open my $fh , ">" , $checkout_hook;
@@ -102,7 +105,6 @@ END
     close $fh;
     chmod 755, $checkout_hook;
 }
-
 
 sub get_remotes {
     my $self = shift;
