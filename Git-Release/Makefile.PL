@@ -9,10 +9,7 @@ tests 't/*.t';
 # test_requires 'Test::More';
 # auto_set_repository;
 
-install_script 'bin/git-ready';
-install_script 'bin/git-ready-close';
-install_script 'bin/git-ready-close-all';
-install_script 'bin/git-ready-merge';
+install_script $_ for <bin/*>;
 
 auto_include;
 WriteAll;
