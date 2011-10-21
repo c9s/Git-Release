@@ -78,7 +78,6 @@ ok( $re->has_develop_branch , 'found dev branch' );
     $branch->remove;
 }
 
-
 $re->gc;
 
 

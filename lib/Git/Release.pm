@@ -87,7 +87,9 @@ sub get_release_branches {
 
 sub get_remotes {
     my $self = shift;
-    my @remotes = split /\n/,$self->repo->command('remote');
+
+    # provide a list context to get remote names
+    my @remotes = $self->repo->command('remote');
     return @remotes;
 }
 
