@@ -184,18 +184,17 @@ sub default_doc_template {
 @{[ $self->name ]}
 ======
 
-Target
-------
-* target1
-* target2
-
-Current Status
---------------
-
-
-Known Issues
+REQUIREMENT
 ------------
 
+SYNOPSIS
+------------
+
+PLAN
+------------
+
+KNOWN ISSUES
+------------
 
 END
 }
@@ -210,6 +209,8 @@ sub init_doc {
     open my $fh , ">" , $doc_path;
     print $fh $self->default_doc_template;
     close $fh;
+
+    $self->edit_doc;
     print "Done.\n";
 }
 
