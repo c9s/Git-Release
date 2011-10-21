@@ -180,7 +180,7 @@ sub default_doc_template {
     my $self = shift;
     return <<"END";
 @{[ $self->name ]}
-==================
+======
 
 Target
 ------
@@ -206,6 +206,14 @@ sub init_doc {
     print $fh $self->default_doc_template;
     close $fh;
     print "Done.\n";
+}
+
+sub edit_doc {
+    my $self = shift;
+    my $doc_path = $self->get_doc_path;
+
+    # XXX:
+    # launch editor to edit doc
 }
 
 sub print_doc {

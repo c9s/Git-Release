@@ -61,7 +61,6 @@ To show the document of a branch:
     $ git branch-doc
 
 
-
 ### Hotfix Branch
 
 May branch off from `master`,
