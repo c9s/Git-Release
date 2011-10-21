@@ -104,9 +104,6 @@ sub _new_branch {
     return $branch;
 }
 
-
-
-
 sub checkout_release_branch {
     my $self = shift;
     my @rbs = $self->get_release_branches;
