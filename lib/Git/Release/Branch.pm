@@ -171,7 +171,7 @@ sub get_doc_path {
 
     my $ext = $self->manager->config->branch_doc_ext;
 
-    my $dir = $self->manager->config->branch_doc_path;
+    my $dir = File::Spec->join( $self->manager->repo->wc_path , $self->manager->config->branch_doc_path );
     mkpath [ $dir ] if ! -e $dir ;
     return File::Spec->join( $dir , "$docname.$ext" );
 }

@@ -9,6 +9,7 @@ use Git;
 use Getopt::Long;
 use List::MoreUtils qw(uniq);
 use DateTime;
+use File::Spec;
 use Git::Release::Config;
 use Git::Release::Branch;
 
