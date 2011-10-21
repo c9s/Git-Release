@@ -2,8 +2,6 @@
 use warnings;
 use strict;
 use feature qw(say switch);
-use lib '/Users/c9s/git/work/GitTools/git-release/Git-Release/lib';
-use Cwd;
 use Git;
 use Getopt::Long;
 use Git::Release;
@@ -16,7 +14,6 @@ $|++;
 Move branch to ready/
 
 =cut
-
 
 my $cb = $manager->get_current_branch;
 $cb->move_to_ready;

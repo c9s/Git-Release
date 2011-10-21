@@ -1,8 +1,7 @@
 #!/usr/bin/env perl
+use 5.12.0;
 use warnings;
 use strict;
-use feature 'say';
-use lib '/Users/c9s/git/work/GitTools/git-release/Git-Release/lib';
 use Git::Release;
 
 my $manager = Git::Release->new;
