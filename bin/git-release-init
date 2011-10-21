@@ -2,5 +2,9 @@
 use 5.12.0;
 use Git::Release;
 $|++;
-my $manager = Git::Release->new;
-$manager->install_hooks;
+my $m = Git::Release->new;
+
+say "Installing hooks...";
+$m->install_hooks;
+
+say "Done";

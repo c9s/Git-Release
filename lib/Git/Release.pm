@@ -88,8 +88,8 @@ sub get_release_branches {
 sub install_hooks {
     my $self = shift;
     my $repo_path = $self->repo->repo_path;
-
     my $checkout_hook = File::Spec->join( $repo_path , 'hooks' , 'post-checkout' );
+    print "$checkout_hook\n";
     open my $fh , ">" , $checkout_hook;
 
     print $fh <<"END";
@@ -100,6 +100,7 @@ my \$m = Git::Release->new; # release manager
 END
 
     close $fh;
+    chmod 755, $checkout_hook;
 }
 
 
