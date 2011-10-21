@@ -151,6 +151,14 @@ sub create_feature_branch {
     return $b;
 }
 
+sub gc {
+    my $self = shift;
+    my %args = @_;
+    $self->repo->command( 'gc' , 
+        $args{aggressive} ? '--aggressive' : () , 
+        $args{prune} ? '--prune=' . ($args{prune} || 'now') : () );
+}
+
 1;
 __END__
 

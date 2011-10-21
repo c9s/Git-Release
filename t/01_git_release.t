@@ -79,9 +79,7 @@ ok( $re->has_develop_branch , 'found dev branch' );
 }
 
 
-
-
-
+$re->gc;
 
 
 chdir '..';

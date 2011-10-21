@@ -17,6 +17,7 @@ Move branch to ready/
 
 =cut
 
+
 my $cb = $manager->get_current_branch;
 $cb->move_to_ready;
 
