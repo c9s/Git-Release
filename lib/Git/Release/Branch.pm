@@ -221,9 +221,10 @@ sub edit_doc {
 
     # XXX:
     # launch editor to edit doc
-    my $bin = $ENV{EDITOR} || 'vim';
-    system(qq{$bin $doc_path}) == 0
-        or die "System failed: $?";
+#     my $bin = $ENV{EDITOR} || 'vim';
+#     system(qq{$bin $doc_path}) == 0
+#         or die "System failed: $?";
+
 }
 
 sub print_doc {
