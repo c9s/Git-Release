@@ -12,6 +12,7 @@ $|++;
 my $branch_name = shift;
 
 my $cb = $branch_name ? $manager->find_branch($branch_name) : $manager->get_current_branch;
+die "branch not found." unless $cb;
 $cb->move_to_ready;
 
 __END__
