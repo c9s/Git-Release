@@ -66,6 +66,7 @@ sub list_local_branches {
 }
 
 sub get_current_branch_name { 
+    my $self = shift;
     my $name = $self->repo->command('rev-parse','--abbrev-ref','HEAD');
     chomp( $name );
     return $name;
