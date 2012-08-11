@@ -26,12 +26,34 @@ sub BUILD {
     return $args;
 }
 
+
+=head2 parse_remote_name
+
+Parse remote name from ref, like:
+
+    remotes/origin/branch_name
+
+=cut
+
 sub parse_remote_name {
     my ($self,$ref) = @_;
     my $new = $ref;
     my ($remote) = ($new =~ m{^remotes\/([^/]+?)\/});
     return $remote;
 }
+
+
+=head2 strip_remote_prefix
+
+Strip remotes prefix from branch ref string
+
+    remotes/origin/branch_name
+
+To
+
+    origin/branch_name
+
+=cut
 
 sub strip_remote_prefix {
     my ($self,$ref) = @_;
@@ -57,9 +79,6 @@ sub remote_name {
         return $name;
     }
 }
-
-
-
 
 sub create {
     my ($self,%args) = @_;
