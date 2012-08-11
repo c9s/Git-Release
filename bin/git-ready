@@ -9,16 +9,17 @@ use Git::Release;
 my $manager = Git::Release->new;
 $|++;
 
-=pod
-
-Move branch to ready/
-
-=cut
+my $branch = shift;
 
 my $cb = $manager->get_current_branch;
 $cb->move_to_ready;
 
 __END__
+=pod
+
+Move branch to ready/
+
+=cut
 # my $version = Git::command_oneline('version');
 my $working_dir = getcwd();
 my $repo = Git->repository ( WorkingSubdir => $working_dir );
@@ -42,5 +43,4 @@ for( split /\n/,$repo->command( 'remote' ) ) {
     $repo->command( 'push' , $_ , $branch , '--delete' );
     $repo->command( 'push' , $_ , $new_branch );
 }
-
 $repo->command( 'gc' , '--aggressive' , '--prune=now' );

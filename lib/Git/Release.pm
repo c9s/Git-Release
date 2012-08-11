@@ -65,11 +65,16 @@ sub list_local_branches {
            $self->repo->command( 'branch' , '-l' );
 }
 
+sub get_current_branch_name { 
+    my $name = $self->repo->command('rev-parse','--abbrev-ref','HEAD');
+    chomp( $name );
+    return $name;
+}
+
 sub get_current_branch {
     my $self = shift;
-    my $result = $self->repo->command('rev-parse','--abbrev-ref','HEAD');
-    chomp( $result );
-    return $self->_new_branch( ref => $result );
+    my $name = $self->get_current_branch_name;
+    return $self->_new_branch( ref => $name );
 }
 
 
