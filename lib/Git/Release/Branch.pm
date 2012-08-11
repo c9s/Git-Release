@@ -62,15 +62,9 @@ sub strip_remote_prefix {
     return $new;
 }
 
-sub is_local {
-    my $self = shift;
-    return ! $self->is_remote;
-}
+sub is_local { return ! $_[0]->is_remote; }
 
-sub is_remote {
-    my $self = shift;
-    return $self->ref =~ m{^remotes/};
-}
+sub is_remote { return $_[0]->ref =~ m{^remotes/}; }
 
 sub remote_name {  
     my $self = shift;
@@ -80,12 +74,18 @@ sub remote_name {
     }
 }
 
+
+=head2 create
+
+create branch
+
+=cut
+
 sub create {
     my ($self,%args) = @_;
     my $from = $args{from} || 'master';
     $self->manager->repo->command( 'branch' , $self->ref , 'master' );
 }
-
 
 # options:
 #
@@ -113,8 +113,7 @@ sub checkout {
 
 sub merge {
     my ($self,$b) = @_;
-    my @ret = $self->manager->repo->command( 'merge' , $b->ref );
-    return @ret;
+    return $self->manager->repo->command( 'merge' , $b->ref );
 }
 
 sub rebase_from {
@@ -178,7 +177,14 @@ sub move_to_ready {
         my $origin_branch_name = $self->ref;
         my $ready_branch_name = 'ready/' . $self->name;
         $self->manager->repo->command( 'branch' , $ready_branch_name , $self->ref );
-        $self->manager->repo->command( 'push'   , 'origin' , $ready_branch_name );
+        $self->manager->repo->command( 'push'   , $self->remote , $ready_branch_name );
+
+        # delete old remote branch
+        $self->manager->repo->command( 'push'   , $self->remote , ':' . $self->name );
+
+        # update self branch name and ref
+        $self->ref( join '/', 'remotes', $self->remote, $ready_branch_name);
+        $self->name($ready_branch_name);
     }
 }
 
