@@ -67,13 +67,13 @@ ok( $re->find_develop_branch , 'found dev branch' );
     ok( $branch , 'branch ok' );
     is( $branch->name , 'test' , 'branch name' );
     $branch->create( from => 'master' );
-    ok( $branch->is_local );
+    ok( $branch->is_local , 'branch created' );
 
     my $new_name = $branch->move_to_ready;
-    is( 'ready/test' , $new_name );
+    is( 'ready/test' , $new_name , 'ready branch ok' );
 
     $new_name = $branch->move_to_released;
-    is( 'released/test' , $new_name );
+    is( 'released/test' , $new_name , 'released branch ok' );
 
     $branch->remove;
 }

@@ -133,8 +133,8 @@ sub push_to {
 
 sub push_to_remotes {
     my $self = shift;
-    my @remotes = $self->manager->get_remotes;
-    $self->push_to($_) for @remotes;
+    $self->push_to($_)
+        for $self->manager->get_remotes;
 }
 
 
@@ -160,22 +160,24 @@ sub move_to_ready {
     my $self = shift;
 
     if( $self->is_local ) {
-        say "Moving local branch @{[ $self->name ]} to ready/";
-
         my $name = $self->name;
+        say "Moving local branch @{[ $self->name ]} to " , $self->manager->config->ready_prefix , $name ;
+
         return if $name =~ $self->manager->config->ready_prefix;
 
         $self->remove_remote_branches;
 
         my $new_name = $self->manager->config->ready_prefix . $name;
         $self->manager->repo->command( 'branch' , '-m' , $name , $new_name );
+
         $self->ref( $new_name );
+        $self->name( $new_name );
         $self->push_to_remotes;
         return $new_name;
     }
     elsif( $self->is_remote ) {
-        say "Moving remote branch @{[ $self->name ]} to ready/";
         my $name = $self->name;
+        say "Moving remote branch @{[ $self->name ]} to ", $self->manager->config->ready_prefix , $name;
 
         # branch from remote ref
         my $origin_branch_name = $self->ref;
@@ -194,6 +196,7 @@ sub move_to_ready {
         # update self branch name and ref
         $self->ref( join '/', 'remotes', $self->remote, $ready_branch_name);
         $self->name($ready_branch_name);
+        return $ready_branch_name;
     }
 }
 
