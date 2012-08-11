@@ -11,7 +11,7 @@ $|++;
 
 my $branch_name = shift;
 
-my $cb = $branch ? $manager->find_branch($branch_name) : $manager->get_current_branch;
+my $cb = $branch_name ? $manager->find_branch($branch_name) : $manager->get_current_branch;
 $cb->move_to_ready;
 
 __END__
