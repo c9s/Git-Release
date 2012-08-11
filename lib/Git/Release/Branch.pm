@@ -1,6 +1,7 @@
 package Git::Release::Branch;
 use warnings;
 use strict;
+use 5.12.0;
 use Moose;
 use File::Spec;
 use File::Path qw(mkpath);
@@ -159,6 +160,8 @@ sub move_to_ready {
     my $self = shift;
 
     if( $self->is_local ) {
+        say "Moving local branch @{[ $self->name ]} to ready/";
+
         my $name = $self->name;
         return if $name =~ $self->manager->config->ready_prefix;
 
@@ -171,15 +174,21 @@ sub move_to_ready {
         return $new_name;
     }
     elsif( $self->is_remote ) {
+        say "Moving remote branch @{[ $self->name ]} to ready/";
         my $name = $self->name;
 
         # branch from remote ref
         my $origin_branch_name = $self->ref;
         my $ready_branch_name = 'ready/' . $self->name;
+
+        say "Moving branch from @{[ $self->ref ]} to @{[ $ready_branch_name ]}";
         $self->manager->repo->command( 'branch' , $ready_branch_name , $self->ref );
+
+        say "Pushing ready branch @{[ $ready_branch_name ]} to remote @{[ $self->remote ]}";
         $self->manager->repo->command( 'push'   , $self->remote , $ready_branch_name );
 
         # delete old remote branch
+        say "Removing branch @{[ $self->name ]} from @{[ $self->remote ]}";
         $self->manager->repo->command( 'push'   , $self->remote , ':' . $self->name );
 
         # update self branch name and ref
