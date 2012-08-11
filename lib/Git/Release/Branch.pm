@@ -1,29 +1,42 @@
 package Git::Release::Branch;
 use warnings;
 use strict;
-use Mo;
+use Moose;
 use File::Spec;
 use File::Path qw(mkpath);
 
-has ref => ();
+has name => ( is => 'rw' , isa => 'Str' );
 
-has manager => ();
+has ref => ( is => 'rw' );
 
-sub name {
-    my $self = shift;
-    if( $self->is_remote ) {
-        my $ref = $self->strip_remote_prefix( $self->ref );
-        return $ref;
+has manager => ( is => 'rw' );
+
+has remote => ( is => 'rw' );
+
+sub BUILD {
+    my ($self,$args) = @_;
+    unless( $args->{remote} ) {
+        my $remote_name = $self->parse_remote_name($args->{ref});
+        $self->remote($remote_name);
     }
-    else {
-        return $self->ref;
+    unless( $args->{name} ) {
+        my $name = $self->strip_remote_prefix( $args->{ref} );
+        $self->name($name);
     }
+    return $args;
+}
+
+sub parse_remote_name {
+    my ($self,$ref) = @_;
+    my $new = $ref;
+    my ($remote) = ($new =~ m{^remotes\/([^/]+?)\/});
+    return $remote;
 }
 
 sub strip_remote_prefix {
     my ($self,$ref) = @_;
     my $new = $ref;
-    $new =~ s{^remotes\/.*?\/}{};
+    $new =~ s{^remotes\/([^/]+?)\/}{};
     return $new;
 }
 
@@ -139,7 +152,17 @@ sub move_to_ready {
         $self->push_to_remotes;
         return $new_name;
     }
+    elsif( $self->is_remote ) {
+        my $name = $self->name;
+
+        # branch from remote ref
+        my $origin_branch_name = $self->ref;
+        my $ready_branch_name = 'ready/' . $self->name;
+        $self->manager->repo->command( 'branch' , $ready_branch_name , $self->ref );
+        $self->manager->repo->command( 'push'   , 'origin' , $ready_branch_name );
+    }
 }
+
 
 
 sub move_to_released {

@@ -77,7 +77,6 @@ sub get_current_branch {
     return $self->_new_branch( ref => $name );
 }
 
-
 # return branches with ready prefix.
 sub get_ready_branches {
     my $self = shift;
@@ -150,6 +149,13 @@ sub checkout_release_branch {
     $rb->checkout;
     return $rb;
 }
+
+
+=head2 find_branch
+
+Find a specific branch from the branch list (remote and local).
+
+=cut
 
 sub find_branch {
     my ( $self, $name ) = @_;

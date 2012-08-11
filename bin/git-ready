@@ -9,9 +9,9 @@ use Git::Release;
 my $manager = Git::Release->new;
 $|++;
 
-my $branch = shift;
+my $branch_name = shift;
 
-my $cb = $manager->get_current_branch;
+my $cb = $branch ? $manager->find_branch($branch_name) : $manager->get_current_branch;
 $cb->move_to_ready;
 
 __END__

@@ -3,7 +3,7 @@ name 'Git-Release';
 all_from 'lib/Git/Release.pm';
 
 requires 'Git';
-requires 'Mo';
+requires 'Moose';
 
 tests 't/*.t';
 # author_tests 'xt';
