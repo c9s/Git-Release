@@ -48,14 +48,21 @@ sub feature_branches {
     my $self = shift;
     my $prefix = $self->manager->config->feature_prefix;
     my @branches = $self->remote_branches;
-    return grep { $_->name =~ /^$prefix/ } @branches;
+    return grep { $_->name =~ /^$prefix\// } @branches;
 }
 
 sub ready_branches { 
     my $self = shift;
     my $prefix = $self->manager->config->ready_prefix;
     my @branches = $self->remote_branches;
-    return grep { $_->name =~ /^$prefix/ } @branches;
+    return grep { $_->name =~ /^$prefix\// } @branches;
+}
+
+sub hotfix_branches {
+    my $self = shift;
+    my $prefix = $self->manager->config->hotfix_prefix;
+    my @branches = $self->remote_branches;
+    return grep { $_->name =~ /^$prefix\// } @branches;
 }
 
 sub new_branch { 

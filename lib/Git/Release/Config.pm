@@ -8,22 +8,27 @@ has repo => ();
 
 sub ready_prefix {
     my $self = shift;
-    return $self->repo->config('release.ready-prefix') || 'ready/';
+    return $self->repo->config('release.ready-prefix') || 'ready';
 }
 
 sub released_prefix {
     my $self = shift;
-    return $self->repo->config('release.released-prefix') || 'released/';
+    return $self->repo->config('release.released-prefix') || 'released';
 }
 
 sub release_prefix {
     my $self = shift;
-    return $self->repo->config('release.release-prefix') || 'release/'; 
+    return $self->repo->config('release.release-prefix') || 'release'; 
+}
+
+sub hotfix_prefix {
+    my $self = shift;
+    return $self->repo->config('release.hotfix-prefix') || 'hotfix';
 }
 
 sub feature_prefix {
     my $self = shift;
-    return $self->repo->config('release.release-prefix') || 'feature/'; 
+    return $self->repo->config('release.release-prefix') || 'feature'; 
 }
 
 sub develop_branch {
@@ -40,7 +45,5 @@ sub branch_doc_path {
     my $self = shift;
     return $self->repo->config('release.branch-doc-dir') || File::Spec->join('docs','branches');
 }
-
-
 
 1;

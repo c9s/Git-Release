@@ -1,47 +1,51 @@
 #!/usr/bin/env perl
-use strict;
-use warnings;
-use feature qw(say switch);
+use 5.12.0;
 use Cwd;
 use Git;
 use Getopt::Long;
+use Git::Release;
 $|++;
 
-my ($action, $hotfix_prefix,$hotfix_name, $branch_off, $branch_name);
-   
-($action,$hotfix_name,$branch_off) = @ARGV;
+my $opt_list;
+my $opt_remote;
 
-die 'action required' unless $action;
+GetOption(
+    'l|list' => \$opt_list,
+    'remote=s' => \$opt_remote,
+);
 
+my $re = Git::Release->new;
 
-# my $version = Git::command_oneline('version');
-my $working_dir = getcwd();
-my $repo = Git->repository ( WorkingSubdir => $working_dir );
+if( $opt_list ) {
+    $re->branch->hotfix_branches;
+} else {
+    my $prefix = $re->config->hotfix_prefix;
+    my $hotfix = shift;
+    my $from = shift || 'master';
+    my $name = $prefix . '/' . $hotfix;
 
+    say "Creating hotfix branch $name.";
+    my $b = $re->branch->new_branch( $name )->create( from => $from );
+    $b->checkout;
 
-$branch_off ||= 'master';
-$hotfix_prefix ||= $repo->config('release.hotfix-prefix') || 'hotfix-';
-$branch_name = $hotfix_prefix . $hotfix_name;
-
-given( $action ) {
-    when ( 'new' ) { 
-        say "Creating branch $branch_name from $branch_off";
-        $repo->command( 'checkout' , '-b' , $branch_name , $branch_off );
-        say "Done";
+    if( $opt_remote ) {
+        say "Pushing feature branch @{[ $b->name ]} to remote $opt_remote... ";
+        $b->push($opt_remote);
     }
-}
 
+    say "Done";
+}
+1;
 __END__
 =pod
 
 To create a hotfix branch from master, for ticket 13033:
 
-    git hotfix new bug0001
+    $ git hotfix bug1 master --redmine --issue=13033
+    > hotfix/bug1
 
-Or
+To list hotfix branches
 
-    git hotfix new bug0001 master
-
-should work.
+    $ git hotfix --list
 
 =cut
