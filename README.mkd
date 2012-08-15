@@ -1,15 +1,13 @@
-
-Git Release
+Git::Release
 ===========
 
+Git::Release provides many useful features 
+to reduce your release process efforts.
 
-Git release process flow helper scripts.
+it defines many tasks for release process and 
+which are generalized, easy to use.
 
-# Setup
-
-    git release-init
-
-# Concept
+# The Release Process
 
 ## The main branches
 
@@ -51,9 +49,9 @@ To create a feature branch from a branch:
 
     $ git feature [feature name] [your branch]
 
-This will create a feature branch with prefix `feature-`, you can configure the prefix in your `.gitconfig` file.
+This will create a feature branch with prefix `feature/`, you can configure the prefix in your `.gitconfig` file.
 
-A branch named like `feature-ajax` will be created.
+A branch named like `feature/ajax` will be created.
 
 
 To show the document of a branch:
@@ -76,6 +74,7 @@ This is not recommended, but you can still create a hotfix branch from a specifi
 if your production branch is not named master,
 
     $ git hotfix [hotfix name] your_branch
+
 
 
 ### Release Ready Branch
@@ -146,6 +145,15 @@ the next release branch.
     git-ready-to-released
     git-rm-released
 
+
+# Setup
+
+To install Git::Release process flow helper scripts.
+
+    git release-init
+
+
+
 # Configuration
 
 to customzie your git-release config, edit your .gitconfig:
@@ -154,9 +162,9 @@ to customzie your git-release config, edit your .gitconfig:
         develop-branch = development
         production-branch = master
         production-branch = production
-        release-branch-prefix = release-
-        feature-branch-prefix = feature-
-        hotfix-branch-prefix  = hotfix-
+        release-branch-prefix = release/
+        feature-branch-prefix = feature/
+        hotfix-branch-prefix  = hotfix/
         site-branch-prefix    = 
 
 # Reference

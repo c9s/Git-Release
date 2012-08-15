@@ -10,10 +10,10 @@ use File::Path qw(rmtree);
 rmtree [ 'test_repo' ] if -e 'test_repo';
 mkdir 'test_repo';
 chdir 'test_repo';
-
 Git::command('init');
 
 my $re = Git::Release->new;
+ok $re;
 diag 'Testing Path: ' . $re->repo->wc_path;
 
 
@@ -32,6 +32,8 @@ make_change $re;
 ok( $re );
 ok( $re->repo );
 is( 'Git', ref( $re->repo ) );
+
+ok $re->branch , 'got branch manager';
 
 ok( $re->get_current_branch );
 is( 'master', $re->get_current_branch->name );

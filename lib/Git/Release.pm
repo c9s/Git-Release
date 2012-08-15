@@ -3,7 +3,7 @@ use strict;
 use warnings;
 our $VERSION = '0.01';
 use feature qw(say switch);
-use Mo;
+use Moose;
 use Cwd;
 use Git;
 use Getopt::Long;
@@ -12,22 +12,32 @@ use DateTime;
 use File::Spec;
 use Git::Release::Config;
 use Git::Release::Branch;
+use Git::Release::BranchManager;
 
-has directory => ( );
+has directory => ( is => 'rw' , default => sub {  getcwd() } );
 
-has repo => (  );
+has repo => ( 
+    is => 'rw',
+    default => sub { 
+        my $self = shift;
+        return Git->repository( Directory => $self->directory );
+    }
+);
 
-has config => ( );
+has config => ( is => 'rw' );
 
-sub new {
-    my ($class,%args) = @_;
-    my $self = bless {} ,$class;
-    my $dir = $args{directory} || getcwd();
+has branch => ( 
+    is => 'rw', 
+    isa => 'Git::Release::BranchManager',
+    default => sub { 
+        my $self = shift;
+        return Git::Release::BranchManager->new( manager => $self );
+    });
 
-    my $repo = Git->repository( Directory => $dir );
-    $self->repo( $repo );
-    $self->directory( $dir );
-    $self->config( Git::Release::Config->new( repo => $repo )  );
+sub BUILD {
+    my ($self,$args) = @_;
+    $self->directory( $args->{directory} ) if $args->{directory};
+    $self->config( Git::Release::Config->new( repo => $self->repo )  );
     return $self;
 }
 
@@ -212,15 +222,30 @@ __END__
 
 =head1 NAME
 
-Git::Release -
+Git::Release - Release Process Manager
 
 =head1 SYNOPSIS
 
-  use Git::Release;
+    use Git::Release;
+
+    my $manager = Git::Release->new;
+    my @branches = $manager->branch->ready_branches;
+    my @branches = $manager->branch->site_branches;
+    my @branches = $manager->branch->feature_branches;
+    my @branches = $manager->branch->hotfix_branches;
+    my @branches = $manager->branch->find_branches( prefix => 'hotfix' );
+    my @branches = $manager->branch->find_branch( name => 'feature/test' );
+    my $current_branch = $manager->branch->current;
+
+    my $prefix = $manager->get_ready_prefix;   # ready/
+    my $prefix = $manager->get_site_prefix;    # site/
+    my $prefix = $manager->get_hotfix_prefix;  # hotfix/
 
 =head1 DESCRIPTION
 
-Git::Release is a release manager for Git. It includes the basic concepts of git workflow.
+Git::Release is a release manager for Git. 
+
+It's based on the basic concepts of git workflow.
 
 =head1 AUTHOR
 
