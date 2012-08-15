@@ -16,6 +16,8 @@ ok $re;
 ok $re->repo , 'get Git repo object';
 ok $re->directory , 'get directory';
 ok $re->branch , 'got branch manager';
+ok $re->remote , 'got remote manager';
+ok $re->remote->all , 'got remotes';
 
 my @branches = $re->branch->remote_branches;
 ok @branches , 'got branches';
