@@ -337,8 +337,18 @@ sub print_doc {
 
 1;
 __END__
+=head1
 
-=head2 Status Changing methods
+=head2 SYNOPSIS
+
+    my $branch = $manager->branch->current;
+    my $develop = $manager->branch->new_branch( 'develop' )->create( from => 'master' );
+
+    $develop->delete;
+    $develop->push;
+    $develop->push('origin');
+    $develop->push('github');
+    $develop->push_to_remotes;
 
 =head3 remove_remote_branches
 
