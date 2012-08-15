@@ -110,8 +110,15 @@ sub delete {
     if( $self->is_local ) {
         $self->manager->repo->command( 'branch' , $args{force} ? '-D' : '-d' , $self->ref );
     }
-    if( $self->is_remote || $args{remote} ) {
+    if( $self->is_remote ) {
         $self->manager->repo->command( 'push' , ($self->remote||$args{remote}) , ':' . $self->name );
+    }
+    if( $args{remote} ) {
+        if( ref($args{remote}) eq 'ARRAY' ) {
+            $self->manager->repo->command( 'push' , $_ , ':' . $self->name ) for @{ $args{remote} };
+        } else {
+            $self->manager->repo->command( 'push' , ($args{remote}) , ':' . $self->name );
+        }
     }
     $self->is_deleted(1);
     return $self;
