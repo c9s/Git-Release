@@ -21,7 +21,8 @@ my @branches = $re->branch->remote_branches;
 ok @branches;
 for my $b ( @branches ) {
     is 'Git::Release::Branch', ref $b;
-    # ok $b->remote;
+    ok $b->remote;
+    is 'origin', $b->remote;
 }
 
 done_testing;

@@ -39,7 +39,9 @@ Parse remote name from ref, like:
 sub parse_remote_name {
     my ($self,$ref) = @_;
     my $new = $ref;
-    my ($remote) = ($new =~ m{^remotes\/([^/]+?)\/});
+    chomp $new;
+    $new =~ s{^remotes/}{};
+    my ($remote) = ($new =~ m{^([^/]+?)\/});
     return $remote;
 }
 

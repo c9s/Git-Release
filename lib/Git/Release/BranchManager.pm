@@ -11,10 +11,12 @@ sub local_branches {
 
 sub remote_branches {
     my $self = shift;
-    my @list = $self->manager->repo->command( 'branch' , '-r' );
-
+    my @list = grep {  ! /HEAD/ } $self->manager->repo->command( 'branch' , '-r' );
+    map { $_ =~ s/^\s*(\S+)\s*.*/\1/g } @list;
+    chomp @list;
+    
     # remove remtoes names, strip star char.
-    return map { $self->manager->_new_branch( ref => $_ ) } map { chomp } @list;
+    return map { $self->manager->_new_branch( ref => $_ ) } @list;
 }
 
 1;
