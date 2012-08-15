@@ -8,20 +8,31 @@ use File::Path qw(mkpath);
 
 has name => ( is => 'rw' , isa => 'Str' );
 
+
+# ref:  remotes/origin/branch_name (remote)
+# ref:  branch_name (local)
+
 has ref => ( is => 'rw' );
 
 has manager => ( is => 'rw' );
 
 has remote => ( is => 'rw' );
 
+has is_deleted => ( is => 'rw' );
+
+
 sub BUILD {
     my ($self,$args) = @_;
+    unless( $args->{ref} ) {
+        $args->{ref} = $args->{name} if $args->{name};
+    }
     unless( $args->{remote} ) {
         my $remote_name = $self->parse_remote_name($args->{ref});
         $self->remote($remote_name);
     }
     unless( $args->{name} ) {
         my $name = $self->strip_remote_prefix( $args->{ref} );
+        $args->{name} = $name;
         $self->name($name);
     }
     return $args;
@@ -38,6 +49,7 @@ Parse remote name from ref, like:
 
 sub parse_remote_name {
     my ($self,$ref) = @_;
+    return unless $ref;
     my $new = $ref;
     chomp $new;
     my ($remote) = ($new =~ m{^remotes/([^/]+?)\/});
@@ -85,20 +97,23 @@ create branch
 
 sub create {
     my ($self,%args) = @_;
-    my $from = $args{from} || 'master';
-    $self->manager->repo->command( 'branch' , $self->ref , 'master' );
+    $self->manager->repo->command( 'branch' , $self->name , ($args{from} || 'master') );
+    return $self;
 }
 
 # options:
 #
-#    ->remove( force => 1 );
-sub remove {
+#    ->delete( force => 1 );
+
+sub delete {
     my ($self,%args) = @_;
     if( $self->is_local ) {
         $self->manager->repo->command( 'branch' , $args{force} ? '-D' : '-d' , $self->ref );
     } elsif( $self->is_remote ) {
         $self->manager->repo->command( 'push' , $self->remote_name , ':' . $self->name );
     }
+    $self->is_deleted(1);
+    return $self;
 }
 
 sub checkout {

@@ -19,7 +19,7 @@ sub _parse_branches {
 sub local_branches { 
     my $self = shift;
     my @list = grep !/^remotes/, $self->_parse_branches;
-    return map { $self->manager->_new_branch( ref => $_ ) } @list;
+    return map { $self->new_branch( ref => $_ ) } @list;
 }
 
 sub remote_branches {
@@ -27,7 +27,7 @@ sub remote_branches {
     my @list = grep /^remotes/,$self->_parse_branches;
 
     # remove remtoes names, strip star char.
-    return map { $self->manager->_new_branch( ref => $_ ) } @list;
+    return map { $self->new_branch( ref => $_ ) } @list;
 }
 
 sub find_local_branches {
@@ -39,7 +39,7 @@ sub find_local_branches {
         @branches = grep { $_->name eq $name } @branches;
     }
     return @branches if wantarray;
-    return @branches[0];
+    return $branches[0];
 }
 
 sub find_remote_branches {
@@ -51,20 +51,52 @@ sub find_remote_branches {
         @branches = grep { $_->name eq $name } @branches;
     }
     return @branches if wantarray;
-    return @branches[0];
+    return $branches[0];
 }
 
 sub current {
     my $self = shift;
-    my $name = $self->get_current_branch_name;
-    return $self->manager->_new_branch( ref => $name );
+    my $name = $self->current_name;
+    return $self->new_branch( ref => $name );
 }
 
-sub get_current_branch_name { 
+sub current_name { 
     my $self = shift;
     my $name = $self->manager->repo->command('rev-parse','--abbrev-ref','HEAD');
     chomp( $name );
     return $name;
+}
+
+sub ready_branches { 
+    my $self = shift;
+    my $prefix = $self->manager->config->ready_prefix;
+    my @branches = $self->remote_branches;
+    return grep { $_->name =~ /^$prefix/ } @branches;
+}
+
+sub new_branch { 
+    my $self = shift;
+    my %args;
+    %args = @_ if @_ > 1;
+    %args = (ref => $_[0]) if @_ == 1;
+    my $branch = Git::Release::Branch->new(  
+            %args, manager => $self->manager );
+    return $branch;
+}
+
+sub find_local_or_remote_branches { 
+    my ($self,$name) = @_;
+    my @branches = $self->find_local_branches( $name ) || $self->find_remote_branches( $name );
+    return @branches if wantarray;
+    return $branches[0];
+}
+
+sub develop { 
+    return $_[0]->find_local_or_remote_branches('develop'); 
+}
+
+sub master { 
+    return $_[0]->find_local_or_remote_branches('master'); 
 }
 
 1;

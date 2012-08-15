@@ -62,30 +62,19 @@ sub list_all_branches {
 }
 
 sub list_remote_branches {
-    my $self = shift;
-    return map { chomp; $_; } 
-           map { s/^\*?\s*//; $_; } 
-           $self->repo->command( 'branch' , '-r' );
+    return $_[0]->branch->remote_branches;
 }
 
 sub list_local_branches {
-    my $self = shift;
-    return map { chomp; $_; } 
-           map { s/^\*?\s*//; $_; } 
-           $self->repo->command( 'branch' , '-l' );
+    return $_[0]->branch->local_branches;
 }
 
 sub get_current_branch_name { 
-    my $self = shift;
-    my $name = $self->repo->command('rev-parse','--abbrev-ref','HEAD');
-    chomp( $name );
-    return $name;
+    return $_[0]->branch->current_name;
 }
 
 sub get_current_branch {
-    my $self = shift;
-    my $name = $self->get_current_branch_name;
-    return $self->_new_branch( ref => $name );
+    return $_[0]->branch->current;
 }
 
 # return branches with ready prefix.

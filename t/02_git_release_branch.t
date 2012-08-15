@@ -64,6 +64,14 @@ diag "test remote branch finder";
     ok $current->ref;
 }
 
+{
+    # create ready branch
+    my $develop = $re->branch->new_branch( 'develop' )->create( from => 'master' );
+    ok $develop , 'develop branch is created';
+    $develop->delete;
+    ok $develop->is_deleted, 'is deleted';
+}
+
 
 
 done_testing;
