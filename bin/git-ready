@@ -25,6 +25,8 @@ sub move_branch_to_ready {
 
 if( $opt_list ) {
     # list ready branches
+    my @branches = $re->branch->ready_branches;
+    use Data::Dumper; warn Dumper( \@branches );
 } else {
     move_branch_to_ready shift;
 }

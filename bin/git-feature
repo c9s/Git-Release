@@ -2,19 +2,20 @@
 use 5.12.0;
 use Git::Release;
 
-my $manager = Git::Release->new;
+my $re = Git::Release->new;
 $|++;
 
-my $branch = shift;
+my $feature_name = shift;
 my $ref = shift;
-exit unless $branch;
+exit unless $feature_name;
 
+my $branch = 'feature/' . $feature_name;
 
+say "Creating branch $branch.";
+my $b = $re->branch->new_branch( $branch )->create( from => ($ref || 'master') );
+$b->checkout;
 
-my $b = $manager->create_feature_branch( $branch , $ref );
-$b->checkout();
-
-say "Pushing @{[ $b->name ]} to remote: ";
+say "Pushing branch @{[ $b->name ]} to remotes... ";
 $b->push_to_remotes;
 
 say 'Done';
