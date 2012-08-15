@@ -104,6 +104,8 @@ sub create {
 # options:
 #
 #    ->delete( force => 1 , remote => 1 );
+#    ->delete( force => 1 , remote => ['origin','github'] );
+#    ->delete( force => 1 , remote => 'github' );
 
 sub delete {
     my ($self,%args) = @_;
@@ -111,12 +113,16 @@ sub delete {
         $self->manager->repo->command( 'branch' , $args{force} ? '-D' : '-d' , $self->ref );
     }
     if( $self->is_remote ) {
-        $self->manager->repo->command( 'push' , ($self->remote||$args{remote}) , ':' . $self->name );
+        $self->manager->repo->command( 'push', $self->remote, ':' . $self->name );
     }
     if( $args{remote} ) {
         if( ref($args{remote}) eq 'ARRAY' ) {
             $self->manager->repo->command( 'push' , $_ , ':' . $self->name ) for @{ $args{remote} };
-        } else {
+        } 
+        elsif( $args{remote} == 1 ) {
+            $self->manager->repo->command( 'push' , $_ , ':' . $self->name ) for $self->manager->get_remotes;
+        }
+        else {
             $self->manager->repo->command( 'push' , ($args{remote}) , ':' . $self->name );
         }
     }
