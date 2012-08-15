@@ -6,7 +6,7 @@ use Git;
 use Getopt::Long;
 use Git::Release;
 
-my $manager = Git::Release->new;
+my $re = Git::Release->new;
 $|++;
 
 my $opt_list;
@@ -17,8 +17,8 @@ GetOptions
 sub move_branch_to_ready { 
     my $branch_name = shift;
     my ($cb) = $branch_name
-                ? $manager->branch->find_local_branches($branch_name) 
-                : $manager->branch->current;
+                ? $re->branch->find_local_branches($branch_name) 
+                : $re->branch->current;
     die "branch $branch_name not found." unless $cb;
     $cb->move_to_ready;
 }
@@ -26,7 +26,9 @@ sub move_branch_to_ready {
 if( $opt_list ) {
     # list ready branches
     my @branches = $re->branch->ready_branches;
-    use Data::Dumper; warn Dumper( \@branches );
+    for my $b ( @branches ) {
+        say $b->name;
+    }
 } else {
     move_branch_to_ready shift;
 }
