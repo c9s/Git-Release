@@ -86,7 +86,7 @@ sub new_branch {
 
 sub find_local_or_remote_branches { 
     my ($self,$name) = @_;
-    my @branches = $self->find_local_branches( $name ) || $self->find_remote_branches( $name );
+    my @branches = ( $self->find_local_branches( $name ), $self->find_remote_branches( $name ) );
     return @branches if wantarray;
     return $branches[0];
 }
