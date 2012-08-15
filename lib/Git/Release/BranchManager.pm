@@ -14,7 +14,7 @@ sub remote_branches {
     my @list = $self->manager->repo->command( 'branch' , '-r' );
 
     # remove remtoes names, strip star char.
-    return map { $self->manager->_new_branch( ref => $_ ) } @list;
+    return map { $self->manager->_new_branch( ref => $_ ) } map { chomp } @list;
 }
 
 1;
