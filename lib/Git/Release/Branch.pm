@@ -122,8 +122,7 @@ sub checkout {
     if( $self->is_local ) {
         @ret = $self->manager->repo->command( 'checkout' , $self->name );
     } else {
-        # checkout a remote tracking branch
-        @ret = $self->manager->repo->command( 'checkout' , '-b' , '-t' , $self->name , $self->ref );
+        @ret = $self->manager->repo->command( 'checkout' , '-t' , $self->ref , '-b' , $self->ref );
     }
     return @ret;
 }
