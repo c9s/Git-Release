@@ -4,6 +4,9 @@ all_from 'lib/Git/Release.pm';
 
 requires 'Git';
 requires 'Moose';
+requires 'File::Path';
+requires 'File::Basename';
+requires 'Net::Redmine';
 
 tests 't/*.t';
 # author_tests 'xt';
