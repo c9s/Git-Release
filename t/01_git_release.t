@@ -1,32 +1,27 @@
 #!/usr/bin/env perl
 use Test::More;
-use lib 'lib';
-
+use lib qw'lib t/lib';
 use Git::Release;
 use Git::Release::Config;
 use Git::Release::Branch;
-use File::Path qw(rmtree);
+use File::Path qw(rmtree mkpath);
+use GitTestUtils qw(create_repo);
 
-rmtree [ 'test_repo' ] if -e 'test_repo';
-mkdir 'test_repo';
-chdir 'test_repo';
-Git::command('init');
+create_repo 'test_repo';
 
 my $re = Git::Release->new;
 ok $re;
 diag 'Testing Path: ' . $re->repo->wc_path;
 
-
-
-sub make_change {
-    my $re = shift;
+sub make_random_commit {
+    my ($re,$file) = @_;
     open FH , ">>" , 'README';
     print FH "README";
     close FH;
     $re->repo->command( 'add' , 'README' );
     $re->repo->command( 'commit' , 'README' , '-m' , '"Change"' );
 }
-make_change $re;
+make_random_commit $re, 'README';
 
 
 ok( $re );
