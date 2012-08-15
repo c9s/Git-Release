@@ -44,6 +44,13 @@ sub current_name {
     return $name;
 }
 
+sub feature_branches {
+    my $self = shift;
+    my $prefix = $self->manager->config->feature_prefix;
+    my @branches = $self->remote_branches;
+    return grep { $_->name =~ /^$prefix/ } @branches;
+}
+
 sub ready_branches { 
     my $self = shift;
     my $prefix = $self->manager->config->ready_prefix;

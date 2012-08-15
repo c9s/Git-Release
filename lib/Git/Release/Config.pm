@@ -18,12 +18,12 @@ sub released_prefix {
 
 sub release_prefix {
     my $self = shift;
-    return $self->repo->config('release.release-prefix') || 'release-'; 
+    return $self->repo->config('release.release-prefix') || 'release/'; 
 }
 
 sub feature_prefix {
     my $self = shift;
-    return $self->repo->config('release.release-prefix') || 'feature-'; 
+    return $self->repo->config('release.release-prefix') || 'feature/'; 
 }
 
 sub develop_branch {

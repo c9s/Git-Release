@@ -1,21 +1,38 @@
 #!/usr/bin/env perl
 use 5.12.0;
+use Getopt::Long;
 use Git::Release;
 
 my $re = Git::Release->new;
 $|++;
 
-my $feature_name = shift;
-my $ref = shift;
-exit unless $feature_name;
+my $opt_list;
 
-my $branch = 'feature/' . $feature_name;
+GetOptions(
+    'l|list' => \$opt_list,
+);
 
-say "Creating branch $branch.";
-my $b = $re->branch->new_branch( $branch )->create( from => ($ref || 'master') );
-$b->checkout;
+if( $opt_list ) {
+    say "Feature branches";
+    my @branches = $re->branch->feature_branches;
+    for my $b ( @branches ) {
+        say "\t",$b->name;
+    }
+}
+else {
+    my $feature_name = shift;
+    my $ref = shift;
+    exit unless $feature_name;
 
-say "Pushing branch @{[ $b->name ]} to remotes... ";
-$b->push_to_remotes;
+    my $branch = 'feature/' . $feature_name;
 
-say 'Done';
+    say "Creating branch $branch.";
+    my $b = $re->branch->new_branch( $branch )->create( from => ($ref || 'master') );
+    $b->checkout;
+
+    say "Pushing branch @{[ $b->name ]} to remotes... ";
+    $b->push_to_remotes;
+
+    say 'Done';
+}
+
