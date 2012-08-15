@@ -56,5 +56,14 @@ diag "test remote branch finder";
 }
 
 
+{
+    my $current = $re->branch->current;
+    ok $current;
+    is ref($current),'Git::Release::Branch';
+    ok $current->name;
+    ok $current->ref;
+}
+
+
 
 done_testing;

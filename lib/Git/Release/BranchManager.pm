@@ -54,5 +54,17 @@ sub find_remote_branches {
     return @branches[0];
 }
 
+sub current {
+    my $self = shift;
+    my $name = $self->get_current_branch_name;
+    return $self->manager->_new_branch( ref => $name );
+}
+
+sub get_current_branch_name { 
+    my $self = shift;
+    my $name = $self->manager->repo->command('rev-parse','--abbrev-ref','HEAD');
+    chomp( $name );
+    return $name;
+}
 
 1;
