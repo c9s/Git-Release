@@ -13,6 +13,7 @@ use File::Spec;
 use Git::Release::Config;
 use Git::Release::Branch;
 use Git::Release::BranchManager;
+use Git::Release::RemoteManager;
 
 has directory => ( is => 'rw' , default => sub {  getcwd() } );
 
@@ -33,6 +34,15 @@ has branch => (
         my $self = shift;
         return Git::Release::BranchManager->new( manager => $self );
     });
+
+has remote => ( 
+    is => 'rw',
+    isa => 'Git::Release::RemoteManager',
+    default => sub {
+        my $self = shift;
+        return Git::Release::RemoteManager->new( manager => $self );
+    }
+);
 
 sub BUILD {
     my ($self,$args) = @_;
