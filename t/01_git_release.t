@@ -46,7 +46,7 @@ ok( $re->find_develop_branch , 'found dev branch' );
 
     my $new_name = $branch->move_to_ready;
     ok( $new_name , $new_name );
-    $branch->remove;
+    $branch->delete;
 }
 
 
@@ -63,7 +63,7 @@ ok( $re->find_develop_branch , 'found dev branch' );
     $new_name = $branch->move_to_released;
     is( 'released/test' , $new_name , 'released branch ok' );
 
-    $branch->remove;
+    $branch->delete;
 }
 
 $re->gc;

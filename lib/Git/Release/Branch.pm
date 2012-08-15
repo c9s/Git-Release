@@ -1,6 +1,4 @@
 package Git::Release::Branch;
-use warnings;
-use strict;
 use 5.12.0;
 use Moose;
 use File::Spec;
@@ -19,7 +17,6 @@ has manager => ( is => 'rw' );
 has remote => ( is => 'rw' );
 
 has is_deleted => ( is => 'rw' );
-
 
 sub BUILD {
     my ($self,$args) = @_;
@@ -136,7 +133,13 @@ sub checkout {
     if( $self->is_local ) {
         @ret = $self->manager->repo->command( 'checkout' , $self->name );
     } else {
-        @ret = $self->manager->repo->command( 'checkout' , '-t' , $self->ref , '-b' , $self->ref );
+        # find local branch to checkout if the branch exists
+        my $local = $self->manager->branch->find_local_branches($self->name);
+        if( $local ) {
+            @ret = $self->manager->repo->command( 'checkout' , $local->name );
+        } else {
+            @ret = $self->manager->repo->command( 'checkout' , '-t' , $self->ref , '-b' , $self->ref );
+        }
     }
     return @ret;
 }
