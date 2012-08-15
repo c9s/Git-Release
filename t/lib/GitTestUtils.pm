@@ -1,10 +1,11 @@
 package GitTestUtils;
 use warnings;
 use strict;
+use String::Random;
 use base qw(Exporter);
 
 
-our @EXPORT_OK = qw(create_repo);
+our @EXPORT_OK = qw(create_repo mk_commit);
 
 use Git::Release;
 use Git::Release::Config;
@@ -18,6 +19,15 @@ sub create_repo {
     chdir $path;
     Git::command('init');
     return $path;
+}
+
+sub mk_commit {
+    my ($re,$file,$line) = @_;
+    open FH , ">>" , $file;
+    print FH $line;
+    close FH;
+    $re->repo->command( 'add' , $file );
+    $re->repo->command( 'commit' , $file , '-m' , "'Add $line'" );
 }
 
 1;
