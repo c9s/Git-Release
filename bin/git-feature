@@ -13,10 +13,9 @@ GetOptions(
 );
 
 if( $opt_list ) {
-    say "Feature branches";
     my @branches = $re->branch->feature_branches;
     for my $b ( @branches ) {
-        say "\t",$b->name;
+        say $b->name;
     }
 }
 else {
