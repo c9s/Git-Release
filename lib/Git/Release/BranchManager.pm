@@ -30,4 +30,17 @@ sub remote_branches {
     return map { $self->manager->_new_branch( ref => $_ ) } @list;
 }
 
+sub find_local_branches {
+    my ( $self, $name ) = @_;
+    my @branches = $self->local_branches;
+    if ( ref $name eq 'RegExp' ) {
+        @branches = grep { $_->name =~ $name } @branches;
+    } else {
+        @branches = grep { $_->name eq $name } @branches;
+    }
+    return @branches if wantarray;
+    return @branches[0];
+}
+
+
 1;

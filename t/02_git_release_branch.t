@@ -33,4 +33,16 @@ for my $b ( @branches ) {
     ok $b->is_local, 'is local';
 }
 
+
+# test local branch finder
+{
+    my $local;
+    $local = $re->branch->find_local_branches( 'master' );
+    is ref($local),'Git::Release::Branch';
+
+    ($local) = $re->branch->find_local_branches( 'master' );
+    is ref($local),'Git::Release::Branch';
+}
+
+
 done_testing;
