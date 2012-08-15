@@ -34,7 +34,7 @@ for my $b ( @branches ) {
 }
 
 
-# test local branch finder
+diag "test local branch finder";
 {
     my $local;
     $local = $re->branch->find_local_branches( 'master' );
@@ -43,6 +43,18 @@ for my $b ( @branches ) {
     ($local) = $re->branch->find_local_branches( 'master' );
     is ref($local),'Git::Release::Branch';
 }
+
+diag "test remote branch finder";
+{
+    my $b;
+    $b = $re->branch->find_remote_branches( 'master' );
+    is ref($b),'Git::Release::Branch';
+
+    ($b) = $re->branch->find_remote_branches( 'master' );
+    is ref($b),'Git::Release::Branch';
+    ok $b->is_remote;
+}
+
 
 
 done_testing;

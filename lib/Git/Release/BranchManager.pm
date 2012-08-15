@@ -42,5 +42,17 @@ sub find_local_branches {
     return @branches[0];
 }
 
+sub find_remote_branches {
+    my ( $self, $name ) = @_;
+    my @branches = $self->remote_branches;
+    if ( ref $name eq 'RegExp' ) {
+        @branches = grep { $_->name =~ $name } @branches;
+    } else {
+        @branches = grep { $_->name eq $name } @branches;
+    }
+    return @branches if wantarray;
+    return @branches[0];
+}
+
 
 1;
