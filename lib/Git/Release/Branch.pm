@@ -103,14 +103,15 @@ sub create {
 
 # options:
 #
-#    ->delete( force => 1 );
+#    ->delete( force => 1 , remote => 1 );
 
 sub delete {
     my ($self,%args) = @_;
     if( $self->is_local ) {
         $self->manager->repo->command( 'branch' , $args{force} ? '-D' : '-d' , $self->ref );
-    } elsif( $self->is_remote ) {
-        $self->manager->repo->command( 'push' , $self->remote_name , ':' . $self->name );
+    }
+    if( $self->is_remote || $args{remote} ) {
+        $self->manager->repo->command( 'push' , ($self->remote||$args{remote}) , ':' . $self->name );
     }
     $self->is_deleted(1);
     return $self;

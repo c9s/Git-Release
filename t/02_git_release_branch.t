@@ -67,16 +67,17 @@ diag "test remote branch finder";
 {
     # create ready branch
     my $master = $re->branch->new_branch('master');
-    my $develop = $re->branch->new_branch( 'develop' )->create( from => 'master' );
+    my $develop = $re->branch->new_branch( 'test_develop' )->create( from => 'master' );
     ok $develop , 'develop branch is created';
     $develop->checkout;
-    is $re->branch->current->name, 'develop';
+    is $re->branch->current->name, 'test_develop';
     $master->checkout;
     is $re->branch->current->name, 'master';
-    $develop->delete;
+
+    $develop->push('origin');
+    $develop->delete( remote => 'origin' );
     ok $develop->is_deleted, 'is deleted';
 }
-
 
 
 done_testing;
