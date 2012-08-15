@@ -142,14 +142,16 @@ sub rebase_from {
     return @ret;
 }
 
-sub push_to {
+sub push {
     my ($self,$remote) = @_;
+    $remote ||= $self->remote;
+    die "remote name is requried." unless $remote;
     $self->manager->repo->command( 'push' , $remote , $self->name );
 }
 
 sub push_to_remotes {
     my $self = shift;
-    $self->push_to($_)
+    $self->push($_)
         for $self->manager->get_remotes;
 }
 
