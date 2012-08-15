@@ -40,8 +40,7 @@ sub parse_remote_name {
     my ($self,$ref) = @_;
     my $new = $ref;
     chomp $new;
-    $new =~ s{^remotes/}{};
-    my ($remote) = ($new =~ m{^([^/]+?)\/});
+    my ($remote) = ($new =~ m{^remotes/([^/]+?)\/});
     return $remote;
 }
 

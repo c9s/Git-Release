@@ -22,7 +22,7 @@ ok @branches;
 for my $b ( @branches ) {
     is 'Git::Release::Branch', ref $b;
     ok $b->remote;
-    is 'origin', $b->remote;
+    like $b->remote, qr/origin|github/;
 }
 
 done_testing;
