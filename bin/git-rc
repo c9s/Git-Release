@@ -1,0 +1,17 @@
+#!/usr/bin/env perl
+use 5.12.0;
+use Getopt::Long;
+use Git::Release;
+
+my $re = Git::Release->new;
+$|++;
+
+my @ready = $re->branch->ready_branches;
+
+say "Found ready branches:";
+for my $b ( @ready ) {
+    say "\t", $b->name;
+}
+
+my $rc_branch = $re->branch->find_branches('rc');
+
