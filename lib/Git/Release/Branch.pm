@@ -53,7 +53,6 @@ sub parse_remote_name {
     return $remote;
 }
 
-
 =head2 strip_remote_prefix
 
 Strip remotes prefix from branch ref string
@@ -71,6 +70,33 @@ sub strip_remote_prefix {
     my $new = $ref;
     $new =~ s{^remotes\/([^/]+?)\/}{};
     return $new;
+}
+
+
+
+
+=head2 prefix
+
+Get branch prefix name, for remote branch, return remotes/{prefix}
+
+For local branch, return {prefix}
+
+=cut
+
+sub prefix { 
+    my $self = shift;
+    my ($prefix) = ($self->name =~ m{^([^/]*)/}i);
+    return $prefix;
+}
+
+sub is_feature { 
+    my $self = shift;
+    return $self->prefix eq 'feature';
+}
+
+sub is_ready { 
+    my $self = shift;
+    return $self->prefix eq 'ready';
 }
 
 sub is_local { return ! $_[0]->is_remote; }
@@ -106,42 +132,86 @@ sub create {
 
 sub delete {
     my ($self,%args) = @_;
-    if( $self->is_local ) {
-        $self->manager->repo->command( 'branch' , $args{force} ? '-D' : '-d' , $self->ref );
-    }
-    if( $self->is_remote ) {
-        $self->manager->repo->command( 'push', $self->remote, ':' . $self->name );
-    }
     if( $args{remote} ) {
         if( ref($args{remote}) eq 'ARRAY' ) {
             $self->manager->repo->command( 'push' , $_ , ':' . $self->name ) for @{ $args{remote} };
         } 
-        elsif( $args{remote} == 1 ) {
-            $self->manager->repo->command( 'push' , $_ , ':' . $self->name ) for $self->manager->get_remotes;
+        elsif( $args{remote} == 1 && $self->remote ) {
+            $self->manager->repo->command( 'push' , $self->remote , ':' . $self->name );
         }
         else {
             $self->manager->repo->command( 'push' , ($args{remote}) , ':' . $self->name );
         }
     }
+    elsif( $args{local} || $self->is_local ) {
+        $self->manager->repo->command( 'branch' , $args{force} ? '-D' : '-d' , $self->ref );
+    }
+    elsif( $self->is_remote ) {
+        $self->manager->repo->command( 'push', $self->remote, ':' . $self->name );
+    }
     $self->is_deleted(1);
     return $self;
 }
 
+sub rename_local {
+    my ($self,$new_name,%args) = @_;
+    if( $self->is_local ) {
+        if( $args{force} ) {
+            $self->manager->repo->command( 'branch','-m',$self->name,$new_name);
+        } else {
+            $self->manager->repo->command( 'branch','-M',$self->name,$new_name);
+        }
+        $self->name($new_name);
+        $self->set_ref($new_name);
+    }
+}
+
+sub set_ref {
+    my ($self,$name) = @_;
+    if( $self->is_remote ) {
+        $self->ref( join '/','remotes',$self->remote,$name );
+    } elsif( $self->is_local ) {
+        $self->ref( $name );
+    }
+}
+
+sub rename {
+    my ($self,$new_name,%args) = @_;
+    if( $self->is_local ) {
+        $self->rename_local($new_name,%args);
+    }
+    elsif( $self->is_remote ) {
+        # if local branch is found, then checkout it 
+        # if not found, then checkout remote tracking branch
+        my $local = $self->manager->branch->find_local_branches($self->name);
+        unless($local) {
+            $local = $self->checkout;  # checkout remote branch, returns local branhc instance
+        }
+        my $old_name = $local->name;
+        $local->delete( remote => 1 );
+        $local->rename_local( $new_name , %args );
+        $local->push( $self->remote );
+        $self->set_ref($new_name);
+        $self->name($new_name);
+    }
+}
+
 sub checkout {
     my $self = shift;
-    my @ret;
     if( $self->is_local ) {
-        @ret = $self->manager->repo->command( 'checkout' , $self->name );
-    } else {
+        $self->manager->repo->command( 'checkout' , $self->name );
+    } 
+    elsif( $self->is_remote ) {
         # find local branch to checkout if the branch exists
         my $local = $self->manager->branch->find_local_branches($self->name);
         if( $local ) {
-            @ret = $self->manager->repo->command( 'checkout' , $local->name );
+            $self->manager->repo->command( 'checkout' , $local->name );
+            return $local;
         } else {
-            @ret = $self->manager->repo->command( 'checkout' , '-t' , $self->ref , '-b' , $self->ref );
+            $self->manager->repo->command( 'checkout' , '-t' , $self->ref , '-b' , $self->name );
+            return $self->manager->branch->new_branch( ref => $self->name );  # local branch instance
         }
     }
-    return @ret;
 }
 
 sub merge {
@@ -175,7 +245,7 @@ sub push_to_remotes {
 
 # Remove remote tracking branches
 # if self is a local branch, we can check if it has a remote branch
-sub remove_remote_branches {
+sub delete_remote_branches {
     my $self = shift;
     my $name = $self->name;
     my @remotes = $self->manager->repo->command( 'remote' );
@@ -190,16 +260,59 @@ sub remove_remote_branches {
 }
 
 
+sub remove_prefix {
+    my ($self) = @_;
+    if( $self->prefix ) {
+        my $name = $self->name;
+        $name =~ s{([^/]*)/}{};
+        $self->name( $name );
+        if( $self->is_remote ) {
+            $self->ref( join '/','remotes',$self->remote,$name);
+        } else {
+            $self->ref($name);
+        }
+    }
+}
+
+sub prepend_prefix {
+    my ($self,$prefix) = @_;
+    return if $self->prefix eq $prefix;
+
+    my $old_name = $self->name;
+    my $new_name = join '/',$prefix,$self->name;
+
+
+    if( $self->is_remote ) {
+        # find local branch to move name
+        my $local_branch = $self->manager->branch->find_local_branches($self->name);
+        unless($local_branch) {
+            $local_branch = $self->checkout;
+        }
+
+        $self->delete( remote => 1 );
+
+        # remotes/{remote name}/{prefix}/{branch name}
+        $self->name($new_name);
+        $self->ref( join '/', 'remotes', $self->remote, $self->name );
+    } else {
+        $self->ref($self->name);
+    }
+
+    $self->manager->repo->command( 'branch', 
+            '-m', $old_name, $self->name );
+
+}
+
+
 sub move_to_ready {
     my $self = shift;
-
+    my $name = $self->name;
     if( $self->is_local ) {
-        my $name = $self->name;
         say "Moving local branch @{[ $self->name ]} to " , $self->manager->config->ready_prefix , $name ;
 
         return if $name =~ $self->manager->config->ready_prefix;
 
-        $self->remove_remote_branches;
+        $self->delete_remote_branches;
 
         my $new_name = $self->manager->config->ready_prefix . $name;
         $self->manager->repo->command( 'branch' , '-m' , $name , $new_name );
@@ -210,7 +323,6 @@ sub move_to_ready {
         return $new_name;
     }
     elsif( $self->is_remote ) {
-        my $name = $self->name;
         say "Moving remote branch @{[ $self->name ]} to ", $self->manager->config->ready_prefix , $name;
 
         # branch from remote ref
@@ -247,7 +359,7 @@ sub move_to_released {
         $new_name =~ s{^.*/}{};
         $new_name = $released_prefix . $new_name;
 
-        $self->remove_remote_branches;
+        $self->delete_remote_branches;
 
         $self->manager->repo->command( 'branch' , '-m' , $name 
                 , $new_name );
@@ -366,7 +478,7 @@ __END__
     $develop->push('github');
     $develop->push_to_remotes;
 
-=head3 remove_remote_branches
+=head3 delete_remote_branches
 
 =head3 move_to_ready 
 

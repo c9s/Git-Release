@@ -9,11 +9,26 @@ use Git::Release;
 my $manager = Git::Release->new;
 $|++;
 
-my $branch_name = shift;
+my $opt_list;
+GetOptions
+    list => \$opt_list,
+;
 
-my $cb = $branch_name ? $manager->find_branch($branch_name) : $manager->get_current_branch;
-die "branch not found." unless $cb;
-$cb->move_to_ready;
+sub move_branch_to_ready { 
+    my $branch_name = shift;
+    my ($cb) = $branch_name
+                ? $manager->branch->find_local_branches($branch_name) 
+                : $manager->branch->current;
+    die "branch $branch_name not found." unless $cb;
+    $cb->move_to_ready;
+}
+
+if( $opt_list ) {
+    # list ready branches
+} else {
+    move_branch_to_ready shift;
+}
+
 
 __END__
 =pod

@@ -79,5 +79,19 @@ diag "test remote branch finder";
     ok $develop->is_deleted, 'is deleted';
 }
 
+{
+#     my $master = $re->branch->new_branch('master');
+#     my $foo = $re->branch->new_branch( 'feature/foo' )->create( from => 'master' );
+#     ok $foo;
+#     is $foo->prefix, 'feature';
+#     is $foo->name, 'feature/foo';
+#     is $foo->ref, 'feature/foo';
+# 
+#     $foo->prepend_prefix('ready');
+#     is $foo->prefix, 'ready/feature';
+#     is $foo->name, 'ready/feature/foo';
+#     is $foo->ref, 'ready/feature/foo';
+};
+
 
 done_testing;
