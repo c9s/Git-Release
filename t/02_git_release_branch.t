@@ -7,18 +7,18 @@ use Git::Release::Branch;
 use File::Path qw(rmtree mkpath);
 use GitTestUtils qw(create_repo mk_commit);
 
+# create_repo 'test_repo';
 
 my $re = Git::Release->new;
 ok $re;
+# mk_commit $re, 'README', 'root commit';
+
 ok $re->repo , 'get Git repo object';
 ok $re->directory , 'get directory';
 ok $re->branch , 'got branch manager';
 
-# create_repo 'test_repo';
-# mk_commit $re, 'README', 'root commit';
-
 my @branches = $re->branch->remote_branches;
-ok @branches;
+ok @branches , 'got branches';
 for my $b ( @branches ) {
     is 'Git::Release::Branch', ref $b;
     ok $b->remote, $b->remote;
@@ -76,22 +76,25 @@ diag "test remote branch finder";
 
     $develop->push('origin');
     $develop->delete( remote => 'origin' );
+    $develop->delete( local => 1 );
     ok $develop->is_deleted, 'is deleted';
 }
 
 {
-#     my $master = $re->branch->new_branch('master');
-#     my $foo = $re->branch->new_branch( 'feature/foo' )->create( from => 'master' );
-#     ok $foo;
-#     is $foo->prefix, 'feature';
-#     is $foo->name, 'feature/foo';
-#     is $foo->ref, 'feature/foo';
-# 
-#     $foo->prepend_prefix('ready');
-#     is $foo->prefix, 'ready/feature';
-#     is $foo->name, 'ready/feature/foo';
-#     is $foo->ref, 'ready/feature/foo';
-};
+    my $master = $re->branch->new_branch('master');
+    ok $master ,'got master';
 
+    my $foo = $re->branch->new_branch( 'feature/foo' )->create( from => 'master' );
+    ok $foo, 'got foo branch';
+    is $foo->prefix, 'feature',   'prefix = feature';
+    is $foo->name, 'feature/foo', 'name   = feature/foo';
+    is $foo->ref, 'feature/foo',  'ref    = feature/foo';
+
+    $foo->prepend_prefix('ready');
+    is $foo->prefix , 'ready'              , 'prefix = ready';
+    is $foo->name   , 'ready/feature/foo'  , 'name = ready/feature/foo';
+    is $foo->ref    , 'ready/feature/foo'  , 'ref  = ready/feature/foo';
+    $foo->delete;
+};
 
 done_testing;

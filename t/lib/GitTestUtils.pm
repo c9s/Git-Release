@@ -3,8 +3,6 @@ use warnings;
 use strict;
 use String::Random;
 use base qw(Exporter);
-
-
 our @EXPORT_OK = qw(create_repo mk_commit);
 
 use Git::Release;
@@ -23,7 +21,7 @@ sub create_repo {
 
 sub mk_commit {
     my ($re,$file,$line) = @_;
-    open FH , ">>" , $file;
+    open FH , ">>" , $file or die $!;
     print FH $line;
     close FH;
     $re->repo->command( 'add' , $file );

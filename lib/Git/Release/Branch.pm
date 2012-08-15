@@ -153,7 +153,7 @@ sub delete {
     return $self;
 }
 
-sub rename_local {
+sub local_rename {
     my ($self,$new_name,%args) = @_;
     if( $self->is_local ) {
         if( $args{force} ) {
@@ -178,18 +178,16 @@ sub set_ref {
 sub rename {
     my ($self,$new_name,%args) = @_;
     if( $self->is_local ) {
-        $self->rename_local($new_name,%args);
+        $self->local_rename($new_name,%args);
     }
     elsif( $self->is_remote ) {
         # if local branch is found, then checkout it 
         # if not found, then checkout remote tracking branch
         my $local = $self->manager->branch->find_local_branches($self->name);
-        unless($local) {
-            $local = $self->checkout;  # checkout remote branch, returns local branhc instance
-        }
+        $local = $self->checkout unless $local;
         my $old_name = $local->name;
         $local->delete( remote => 1 );
-        $local->rename_local( $new_name , %args );
+        $local->local_rename( $new_name , %args );
         $local->push( $self->remote );
         $self->set_ref($new_name);
         $self->name($new_name);
@@ -280,27 +278,21 @@ sub prepend_prefix {
 
     my $old_name = $self->name;
     my $new_name = join '/',$prefix,$self->name;
-
-
     if( $self->is_remote ) {
         # find local branch to move name
-        my $local_branch = $self->manager->branch->find_local_branches($self->name);
-        unless($local_branch) {
-            $local_branch = $self->checkout;
-        }
+        my $local = $self->manager->branch->find_local_branches($self->name);
+        $local = $self->checkout unless $local;
 
         $self->delete( remote => 1 );
+        $local->local_rename( $new_name );
+        $local->push( $self->remote );
 
         # remotes/{remote name}/{prefix}/{branch name}
         $self->name($new_name);
-        $self->ref( join '/', 'remotes', $self->remote, $self->name );
+        $self->set_ref( $new_name );
     } else {
-        $self->ref($self->name);
+        $self->local_rename( $new_name );
     }
-
-    $self->manager->repo->command( 'branch', 
-            '-m', $old_name, $self->name );
-
 }
 
 
