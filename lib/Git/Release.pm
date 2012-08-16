@@ -177,18 +177,20 @@ sub find_develop_branch {
 sub checkout_develop_branch {
     my $self = shift;
     my $name = $self->config->develop_branch;
-
-    my $branch;
-    $branch = $self->find_branch( $name );
-
+    my $branch = $self->branch->find_branches( $name );
     # if branch found, we should check it out
-    if ( $branch ) {
-        $branch->checkout;
-    } else {
-        $branch = $self->_new_branch( ref => $name );
-        $branch->create( from => 'master' );
-    }
+    $branch = $self->_new_branch( ref => $name )->create( from => 'master' ) unless $branch;
+    $branch->checkout;
     return $branch;
+}
+
+sub checkout_rc_branch {
+    my $self = shift;
+    my $name = $self->config->rc_branch;
+    my $rc = $re->branch->find_branches($name);
+    $rc = $re->branch->new_branch($name)->create(from => 'master') unless $rc ;
+    $rc->checkout;
+    return $rc;
 }
 
 

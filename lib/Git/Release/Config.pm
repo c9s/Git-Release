@@ -36,6 +36,11 @@ sub develop_branch {
     return $self->repo->config('release.develop-branch') || 'develop';
 }
 
+sub rc_branch {
+    my $self = shift;
+    return $self->repo->config('release.rc-branch') || 'rc';
+}
+
 sub branch_doc_ext {
     my $self = shift;
     return $self->repo->config('release.branch-doc-ext') || 'mkd';

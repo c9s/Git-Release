@@ -14,12 +14,7 @@ $|++;
 
 my @ready = $re->branch->ready_branches;
 
-my $rc = $re->branch->find_branches('rc');
-unless( $rc ) {
-    say "rc branch is not found, creating rc branch from master.";
-    $rc = $re->branch->new_branch('rc')->create(from => 'master');
-}
-$rc->checkout;
+my $rc = $re->checkout_rc_branch;
 
 say "Ready branches:";
 for my $b ( @ready ) {
