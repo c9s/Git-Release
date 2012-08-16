@@ -30,6 +30,16 @@ ok $re->remote->all , 'got remotes';
     }
 }
 
+{
+    my %list = $re->tracking_list;
+    for my $local_ref ( keys %list ) {
+        my $branch = $re->branch->new_branch( ref => $local_ref );
+        ok $branch;
+        ok $branch->name;
+        ok $branch->ref;
+    }
+}
+
 
 
 my @branches = $re->branch->remote_branches;

@@ -13,6 +13,8 @@ has name => ( is => 'rw' , isa => 'Str' );
 
 has ref => ( is => 'rw' );
 
+has tracking_ref => ( is => 'rw', isa => 'Str' );
+
 has manager => ( is => 'rw' );
 
 has remote => ( is => 'rw' );
@@ -23,6 +25,8 @@ sub BUILD {
     my ($self,$args) = @_;
     unless( $args->{ref} ) {
         $args->{ref} = $args->{name} if $args->{name};
+    } else {
+        $args->{ref} =~ s{^refs/}{}; # always strip refs prefix
     }
     unless( $args->{remote} ) {
         my $remote_name = $self->parse_remote_name($args->{ref});

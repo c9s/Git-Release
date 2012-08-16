@@ -123,6 +123,17 @@ END
     chmod 0755, $checkout_hook;
 }
 
+sub tracking_list {
+    my ($self) = @_;
+    my @args = qw(for-each-ref);
+    push @args, '--format';
+    push @args ,'%(refname:short):%(upstream)';
+    push @args, 'refs/heads';
+    my @lines = $self->repo->command(@args);
+    my %tracking = map { split /:/ } @lines;
+    return %tracking;
+}
+
 sub update_remote_refs {
     my $self = shift; 
     return $self->repo->command(qw(remote update --prune));
