@@ -187,8 +187,8 @@ sub checkout_develop_branch {
 sub checkout_rc_branch {
     my $self = shift;
     my $name = $self->config->rc_branch;
-    my $rc = $re->branch->find_branches($name);
-    $rc = $re->branch->new_branch($name)->create(from => 'master') unless $rc ;
+    my $rc = $self->branch->find_branches($name);
+    $rc = $self->branch->new_branch($name)->create(from => 'master') unless $rc ;
     $rc->checkout;
     return $rc;
 }
