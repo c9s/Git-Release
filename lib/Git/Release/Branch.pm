@@ -284,7 +284,11 @@ sub prepend_prefix {
         $local = $self->checkout unless $local;
 
         # update and merge
-        $local->pull;
+        $local->pull( 
+            remote => $self->remote, 
+            no_edit => 1, 
+            fast_forward => 1 
+        );
 
         $self->delete( remote => 1 );
         $local->local_rename( $new_name );
