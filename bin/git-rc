@@ -21,7 +21,7 @@ unless( $rc ) {
 }
 $rc->checkout;
 
-say "Found ready branches:";
+say "Ready branches:";
 for my $b ( @ready ) {
     say "\t", $b->name;
 }
@@ -35,4 +35,4 @@ for my $b ( @ready ) {
         or die("test command $opt_testing failed.");
 }
 
-
+say color('green'), "Testing done successfully, now it's ready for release.", color('reset');
