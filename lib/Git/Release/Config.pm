@@ -16,6 +16,11 @@ sub released_prefix {
     return $self->repo->config('release.released-prefix') || 'released';
 }
 
+sub site_prefix {
+    my $self = shift;
+    return $self->repo->config('release.site-prefix') || 'site';
+}
+
 sub release_prefix {
     my $self = shift;
     return $self->repo->config('release.release-prefix') || 'release'; 

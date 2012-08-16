@@ -36,7 +36,6 @@ else {
         say "Pushing feature branch @{[ $b->name ]} to remote $opt_remote... ";
         $b->push($opt_remote);
     }
-
     say 'Done';
 }
 
