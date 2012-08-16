@@ -26,6 +26,7 @@ lib/Git/Release/Branch.pm
 lib/Git/Release/BranchManager.pm
 lib/Git/Release/Config.pm
 lib/Git/Release/RemoteManager.pm
+lib/Git/Release/Remote.pm
 Makefile.PL
 MANIFEST
 META.yml
