@@ -134,7 +134,14 @@ create branch
 
 sub create {
     my ($self,%args) = @_;
-    $self->manager->repo->command( 'branch' , $self->name , ($args{from} || 'master') );
+    my @args = qw(branch);
+
+    # git branch --set-upstream develop origin/develop
+    CORE::push @args, '--set-upstream' if $args{upstream};
+    CORE::push @args, $self->name;
+    CORE::push @args, $args{from} || 'master';
+
+    $self->manager->repo->command(@args);
     return $self;
 }
 
@@ -274,12 +281,18 @@ sub push {
     die "remote name is requried." unless $remote;
     my @args = ('push');
 
-    # git branch --set-upstream develop origin/develop
     # git push --set-upstream origin develop
     CORE::push @args, '--set-upstream' if $args{upstream};
     CORE::push @args, $remote;
     CORE::push @args, $self->name;
     $self->manager->repo->command(@args);
+
+    if( $args{upstream} ) {
+        # update tracking_ref
+        # eg:  refs/remotes/origin/branch
+        $self->tracking_ref(join '/','refs','remotes',$remote,$self->name);
+    }
+
 }
 
 sub push_to_remotes {
