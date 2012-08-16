@@ -25,6 +25,7 @@ else {
     my $ref = shift;
     exit unless $site_name;
 
+    $opt_remote ||= $re->remote->origin;
     my $prefix = $re->config->site_prefix;
     my $name = $prefix . '/' . $site_name;
 

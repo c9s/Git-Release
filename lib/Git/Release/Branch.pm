@@ -28,6 +28,10 @@ sub BUILD {
     } else {
         $args->{ref} =~ s{^refs/}{}; # always strip refs prefix
     }
+
+    # remote tracking ref
+    $args->{tracking_ref} =~ s{^refs/}{} if $args->{tracking_ref};
+
     unless( $args->{remote} ) {
         my $remote_name = $self->parse_remote_name($args->{ref});
         $self->remote($remote_name);
@@ -122,7 +126,7 @@ sub remote_tracking_branch {
 }
 
 sub has_tracking_ref {
-    return $self->tracking_ref ? 1 : 0;
+    return $_[0]->tracking_ref ? 1 : 0;
 }
 
 
@@ -212,10 +216,7 @@ sub update_ref {
 
 sub rename {
     my ($self,$new_name,%args) = @_;
-    if( $self->is_local ) {
-        $self->local_rename($new_name,%args);
-    }
-    elsif( $self->is_remote ) {
+    if( $self->is_remote ) {
         # if local branch is found, then checkout it 
         # if not found, then checkout remote tracking branch
         my $local = $self->manager->branch->find_local_branches($self->name);
@@ -233,14 +234,14 @@ sub rename {
         $self->name($new_name);
         $self->update_ref($new_name);
     }
+    elsif( $self->is_local ) {
+        $self->local_rename($new_name,%args);
+    }
 }
 
 sub checkout {
     my $self = shift;
-    if( $self->is_local ) {
-        $self->manager->repo->command( 'checkout' , $self->name );
-    } 
-    elsif( $self->is_remote ) {
+    if( $self->is_remote ) {
         # find local branch to checkout if the branch exists
         my $local = $self->manager->branch->find_local_branches($self->name);
         if( $local ) {
@@ -251,6 +252,18 @@ sub checkout {
             return $self->manager->branch->new_branch( ref => $self->name );  # local branch instance
         }
     }
+    elsif( $self->is_local && $self->tracking_ref ) {
+        my $local = $self->manager->branch->find_local_branches($self->name);
+        if( $local ) {
+            $self->manager->repo->command( 'checkout' , $local->name );
+        } else {
+            $self->manager->repo->command( 'checkout' , '-t' , $self->tracking_ref , '-b' , $self->name );
+        }
+        return $self;
+    }
+    elsif( $self->is_local ) {
+        $self->manager->repo->command( 'checkout' , $self->name );
+    } 
 }
 
 sub merge {

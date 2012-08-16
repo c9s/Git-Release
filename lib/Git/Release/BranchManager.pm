@@ -56,7 +56,7 @@ sub ready_branches {
     return grep { $_->name =~ /^$prefix\// } $self->branches( %args );
 }
 
-sub ready_branches { 
+sub site_branches { 
     my ($self,%args) = @_;
     my $prefix = $self->manager->config->site_prefix;
     return grep { $_->name =~ /^$prefix\// } $self->branches( %args );

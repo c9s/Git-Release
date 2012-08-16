@@ -25,6 +25,7 @@ else {
     my $ref = shift;
     exit unless $feature_name;
 
+    $opt_remote ||= $re->remote->origin;
     my $prefix = $re->config->feature_prefix;
     my $name = $prefix . '/' . $feature_name;
 

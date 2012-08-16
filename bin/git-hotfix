@@ -19,6 +19,7 @@ my $re = Git::Release->new;
 if( $opt_list ) {
     $re->branch->hotfix_branches;
 } else {
+    $opt_remote ||= $re->remote->origin;
     my $prefix = $re->config->hotfix_prefix;
     my $hotfix = shift;
     my $from = shift || 'master';
@@ -30,7 +31,7 @@ if( $opt_list ) {
 
     if( $opt_remote ) {
         say "Pushing feature branch @{[ $b->name ]} to remote $opt_remote... ";
-        $b->push($opt_remote);
+        $b->push($opt_remote, upstream => 1);
     }
 
     say "Done";

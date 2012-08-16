@@ -30,7 +30,8 @@ sub get {
 }
 
 sub origin {
-    return grep /origin/,$_[0]->list;
+    my @r = grep /origin/,$_[0]->list;
+    return pop @r if @r;
 }
 
 1;
