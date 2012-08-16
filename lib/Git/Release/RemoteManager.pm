@@ -29,4 +29,8 @@ sub get {
     return Git::Release::Remote->new( manager => $self->manager , name => $name );
 }
 
+sub origin {
+    return grep /origin/,$_[0]->list;
+}
+
 1;

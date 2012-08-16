@@ -34,7 +34,7 @@ else {
 
     if( $opt_remote ) {
         say "Pushing site branch @{[ $b->name ]} to remote $opt_remote... ";
-        $b->push($opt_remote);
+        $b->push($opt_remote, upstream => 1);
     }
     say 'Done';
 }
