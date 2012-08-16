@@ -43,7 +43,7 @@ sub branch_doc_ext {
 
 sub branch_doc_path {
     my $self = shift;
-    return $self->repo->config('release.branch-doc-dir') || File::Spec->join('docs','branches');
+    return $self->repo->config('release.branch-doc-dir') || File::Spec->join('doc','branches');
 }
 
 1;
