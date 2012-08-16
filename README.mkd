@@ -1,5 +1,5 @@
 Git::Release
-===========
+============
 
 Git::Release provides many useful features 
 to reduce your release process efforts.
