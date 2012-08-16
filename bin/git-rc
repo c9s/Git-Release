@@ -3,6 +3,11 @@ use 5.12.0;
 use Getopt::Long;
 use Git::Release;
 
+my $opt_testing;
+GetOptions(
+    't|testing=s' => \$opt_testing,
+);
+
 my $re = Git::Release->new;
 $|++;
 
@@ -24,5 +29,9 @@ for my $b ( @ready ) {
     say "===> Merging " , $b->ref;
     my @lines = $rc->merge( $b );
     say @lines;
+    die 'Merge error' unless @lines;
+    system( $opt_testing ) == 0
+        or die("test command $opt_testing failed.");
 }
+
 
