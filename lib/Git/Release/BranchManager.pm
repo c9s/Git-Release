@@ -47,22 +47,25 @@ sub current_name {
 sub feature_branches {
     my ($self,%args) = @_;
     my $prefix = $self->manager->config->feature_prefix;
-    my @branches = $self->branches( %args );
-    return grep { $_->name =~ /^$prefix\// } @branches;
+    return grep { $_->name =~ /^$prefix\// } $self->branches( %args );
 }
 
 sub ready_branches { 
     my ($self,%args) = @_;
     my $prefix = $self->manager->config->ready_prefix;
-    my @branches = $self->branches( %args );
-    return grep { $_->name =~ /^$prefix\// } @branches;
+    return grep { $_->name =~ /^$prefix\// } $self->branches( %args );
+}
+
+sub ready_branches { 
+    my ($self,%args) = @_;
+    my $prefix = $self->manager->config->site_prefix;
+    return grep { $_->name =~ /^$prefix\// } $self->branches( %args );
 }
 
 sub hotfix_branches {
     my ($self,%args) = @_;
     my $prefix = $self->manager->config->hotfix_prefix;
-    my @branches = $self->branches( %args );
-    return grep { $_->name =~ /^$prefix\// } @branches;
+    return grep { $_->name =~ /^$prefix\// } $self->branches( %args );
 }
 
 sub new_branch { 
