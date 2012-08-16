@@ -265,7 +265,7 @@ sub push {
 sub push_to_remotes {
     my $self = shift;
     $self->push($_)
-        for $self->manager->remote->all;
+        for $self->manager->remote->list;
 }
 
 

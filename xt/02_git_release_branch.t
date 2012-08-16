@@ -19,6 +19,19 @@ ok $re->branch , 'got branch manager';
 ok $re->remote , 'got remote manager';
 ok $re->remote->all , 'got remotes';
 
+{
+    my @remotes = $re->remote->all;
+    ok @remotes, "got remotes";
+    for my $r ( @remotes ) {
+        ok $r;
+        my $info = $r->info;
+        ok $info->{tracking};
+        is $info->{tracking}->{master}, 'remotes/origin/master';
+    }
+}
+
+
+
 my @branches = $re->branch->remote_branches;
 ok @branches , 'got branches';
 for my $b ( @branches ) {
