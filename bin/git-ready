@@ -25,6 +25,7 @@ sub move_branch_to_ready {
 
 if( $opt_list ) {
     # list ready branches
+    $re->update_remote_refs;
     my @branches = $re->branch->ready_branches;
     for my $b ( @branches ) {
         say $b->ref;

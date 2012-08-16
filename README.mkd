@@ -1,5 +1,6 @@
 Git::Release
 ============
+(Working in progress, alpha stage)
 
 Git::Release provides many useful features 
 to reduce your release process efforts.
@@ -54,6 +55,8 @@ This will create a feature branch with prefix `feature/`, you can configure the 
 A branch named like `feature/ajax` will be created.
 
 
+### Branch document
+
 To show the document of a branch:
 
     $ git branch-doc
@@ -98,32 +101,37 @@ Steps are followed below:
 * Trigger unit tests, selenium tests, continue to next step if it passed.
 * Prune remote branches.
 * Rename branch prefix to ready/
-* Merge into current release branch.
 
-### Release Branch
+### Release Candidate Branch
 
-A release branch may branch off from `develop`, 
+A release candidate branch may branch off from `develop`, 
 and must merge back into: `develop` & `master`.
 
-Branch naming convention: `release-*`
+Branch naming convention: `rc` or `rc-{version name}`
 
+To create a release candiate branch:
 
-To create a release branch (should be branched from develop)
+    $ git rc
 
-    $ git release new [version name]
+Steps are followed below:
+
+* checkout rc branch
+* find release ready branches (with ready/ prefix)
+* merge ready branches one by one, and do testing after each merge.
 
 Once your release branch is ready, you can run release.
 
-    $ git release
+    $ git release 
+    
+(Not implemented)
 
-The git release steps are followed below,
+The release steps are followed below,
 
-* Move current ready/ branches into released.
+* Rename current ready/ branches with released prefix.
 * Merge current release branch into master.
 * Delete current release branch.
 * Tag a release version on master.
 * Rebase master branch onto `develop` branch.
-
 
 ### Site Branch
 
@@ -133,20 +141,11 @@ So a site branch is branched off from a released framework version.
 Custom Features might be developed on it, some of them can be merged back into
 the next release branch.
 
-# Helper Scripts
-
-    git-ready
-    git-ready-to-released
-    git-rm-released
-
-
 # Setup
 
 To install Git::Release process flow helper scripts.
 
     git release-init
-
-
 
 # Configuration
 
@@ -170,7 +169,7 @@ http://reinh.com/blog/2009/03/02/a-git-workflow-for-agile-teams.html
 
 # Todo
 
-* ticket integration.
+* redmine ticket integration.
 * config integration.
 
 (Comments are welcome)
