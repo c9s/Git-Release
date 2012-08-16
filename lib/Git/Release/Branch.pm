@@ -273,6 +273,9 @@ sub push {
     $remote ||= $self->remote;
     die "remote name is requried." unless $remote;
     my @args = ('push');
+
+    # git branch --set-upstream develop origin/develop
+    # git push --set-upstream origin develop
     CORE::push @args, '--set-upstream' if $args{upstream};
     CORE::push @args, $remote;
     CORE::push @args, $self->name;
