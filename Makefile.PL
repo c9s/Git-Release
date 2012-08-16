@@ -8,6 +8,7 @@ requires 'File::Path';
 requires 'File::Spec';
 requires 'File::Basename';
 requires 'Net::Redmine';
+requires 'Getopt::Long';
 
 tests 't/*.t';
 # author_tests 'xt';
