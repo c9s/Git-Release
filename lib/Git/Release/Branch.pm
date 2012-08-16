@@ -116,6 +116,15 @@ sub remote_name {
     }
 }
 
+sub remote_tracking_branch {
+    my $self = shift;
+    return $self->manager->branch->new_branch(ref => $self->tracking_ref);
+}
+
+sub has_tracking_ref {
+    return $self->tracking_ref ? 1 : 0;
+}
+
 
 =head2 create
 

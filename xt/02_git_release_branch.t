@@ -33,10 +33,11 @@ ok $re->remote->all , 'got remotes';
 {
     my %list = $re->tracking_list;
     for my $local_ref ( keys %list ) {
-        my $branch = $re->branch->new_branch( ref => $local_ref );
+        my $branch = $re->branch->new_branch( ref => $local_ref , tracking_ref => $list{ $local_ref } );
         ok $branch;
         ok $branch->name;
         ok $branch->ref;
+        ok $branch->tracking_ref;
     }
 }
 
