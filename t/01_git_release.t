@@ -51,11 +51,13 @@ is( 'Git' , ref( $re->config->repo ) , 'is Git');
     $branch->create( from => 'master' );
     ok( $branch->is_local , 'branch created' );
 
-    my $new_name = $branch->move_to_ready;
-    is( 'ready/test' , $new_name , 'ready branch ok' );
+    my $ok = $branch->move_to_ready;
+    ok $ok;
+    is( 'ready/test' , $branch->name , 'ready branch ok' );
 
-    $new_name = $branch->move_to_released;
-    is( 'released/test' , $new_name , 'released branch ok' );
+    $ok = $branch->move_to_released;
+    ok $ok;
+    is( 'released/test' , $branch->name , 'released branch ok' );
 
     $branch->delete;
 }

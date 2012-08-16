@@ -153,6 +153,13 @@ sub delete {
     return $self;
 }
 
+
+=head2 local_rename
+
+Rename branch locally.
+
+=cut
+
 sub local_rename {
     my ($self,$new_name,%args) = @_;
     if( $self->is_local ) {
@@ -162,11 +169,18 @@ sub local_rename {
             $self->manager->repo->command( 'branch','-M',$self->name,$new_name);
         }
         $self->name($new_name);
-        $self->set_ref($new_name);
+        $self->update_ref($new_name);
     }
 }
 
-sub set_ref {
+
+=head2 update_ref
+
+update_ref by branch name
+
+=cut
+
+sub update_ref {
     my ($self,$name) = @_;
     if( $self->is_remote ) {
         $self->ref( join '/','remotes',$self->remote,$name );
@@ -185,12 +199,18 @@ sub rename {
         # if not found, then checkout remote tracking branch
         my $local = $self->manager->branch->find_local_branches($self->name);
         $local = $self->checkout unless $local;
-        my $old_name = $local->name;
+        $local->pull( 
+            remote => $self->remote, 
+            no_edit => 1, 
+            fast_forward => 1 
+        );
         $local->delete( remote => 1 );
+
         $local->local_rename( $new_name , %args );
+
         $local->push( $self->remote );
-        $self->set_ref($new_name);
         $self->name($new_name);
+        $self->update_ref($new_name);
     }
 }
 
@@ -257,99 +277,69 @@ sub delete_remote_branches {
     }
 }
 
+sub replace_prefix {
+    my ($self,$new_prefix,%args) = @_;
+    if ($self->prefix) {
+        my $new_name = $self->name;
+        $new_name =~ s{^([^/]*)/}{$new_prefix/};
+        $self->rename( $new_name, %args );
+    }
+}
 
 sub remove_prefix {
-    my ($self) = @_;
-    if( $self->prefix ) {
-        my $name = $self->name;
-        $name =~ s{([^/]*)/}{};
-        $self->name( $name );
-        if( $self->is_remote ) {
-            $self->ref( join '/','remotes',$self->remote,$name);
-        } else {
-            $self->ref($name);
-        }
+    my ($self,%args) = @_;
+    if ($self->prefix) {
+        my $new_name = $self->name;
+        $new_name =~ s{^([^/]*)/}{};
+        $self->rename( $new_name, %args );
     }
 }
 
 sub prepend_prefix {
-    my ($self,$prefix) = @_;
-    return if $self->prefix eq $prefix;
-
-    my $old_name = $self->name;
+    my ($self,$prefix,%args) = @_;
+    return if $self->prefix && $self->prefix eq $prefix;
     my $new_name = join '/',$prefix,$self->name;
-    if( $self->is_remote ) {
-        # find local branch to move name
-        my $local = $self->manager->branch->find_local_branches($self->name);
-        $local = $self->checkout unless $local;
-
-        # update and merge
-        $local->pull( 
-            remote => $self->remote, 
-            no_edit => 1, 
-            fast_forward => 1 
-        );
-
-        $self->delete( remote => 1 );
-        $local->local_rename( $new_name );
-        $local->push( $self->remote );
-
-        # remotes/{remote name}/{prefix}/{branch name}
-        $self->name($new_name);
-        $self->set_ref( $new_name );
-    } else {
-        $self->local_rename( $new_name );
-    }
+    $self->rename($new_name,%args);
 }
 
 sub pull { 
     my ($self,%args) = @_;
-    my @args = ('pull');
-    push @args , '--rebase' if $args{rebase};
-    push @args , '--quiet'  if $args{quiet};
-    push @args , '--no-commit'  if $args{no_commit};
-    push @args , '--commit'  if $args{commit};
-    push @args , '--ff'  if $args{fast_forward};
-    push @args , '--edit'  if $args{edit};
-    push @args , '--no-edit'  if $args{no_edit};
-    push @args , '--squash'  if $args{squash};
-    push @args, ($args{remote} || $self->remote || 'origin');
-    push @args, ($args{name} || $self->name);
-    return $self->manager->repo->command(@args);
+    my @a = ('pull');
+    CORE::push @a, '--rebase' if $args{rebase};
+    CORE::push @a, '--quiet'  if $args{quiet};
+    CORE::push @a, '--no-commit'  if $args{no_commit};
+    CORE::push @a, '--commit'  if $args{commit};
+    CORE::push @a, '--ff'  if $args{fast_forward};
+    CORE::push @a, '--edit'  if $args{edit};
+    CORE::push @a, '--no-edit'  if $args{no_edit};
+    CORE::push @a, '--squash'  if $args{squash};
+    CORE::push @a, ($args{remote} || $self->remote || 'origin');
+    CORE::push @a, ($args{name} || $self->name);
+    return $self->manager->repo->command(@a);
 }
 
 sub move_to_ready {
     my $self = shift;
     my $name = $self->name;
-
     my $prefix = $self->manager->config->ready_prefix;
+    return if $self->prefix && $self->prefix eq $prefix;
+
     my $new_name = $prefix . '/' . $name;
     say "Moving branch @{[ $self->name ]} to " , $new_name;
     $self->prepend_prefix( $prefix );
     return $self;
 }
 
-
-
 sub move_to_released {
     my $self = shift;
     my $name = $self->name;
-    my $released_prefix = $self->manager->config->released_prefix;
-    return if $name =~ $released_prefix;
+    my $prefix = $self->manager->config->released_prefix;
+    return if $self->prefix && $self->prefix eq $prefix;
+    return if $self->prefix ne 'ready';  # if it's not with ready prefix, do not move to released/
 
-    if( $self->is_local ) {
-        my $new_name = $name;
-        $new_name =~ s{^.*/}{};
-        $new_name = $released_prefix . $new_name;
-
-        $self->delete_remote_branches;
-
-        $self->manager->repo->command( 'branch' , '-m' , $name 
-                , $new_name );
-        $self->ref( $new_name );
-        $self->push_to_remotes;
-        return $new_name;
-    }
+    say "Moving branch @{[ $self->name ]} to released state.";
+    $self->replace_prefix( $prefix );
+    return $self;
 }
 
 sub get_doc_path {
