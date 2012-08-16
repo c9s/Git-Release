@@ -75,8 +75,6 @@ if your production branch is not named master,
 
     $ git hotfix [hotfix name] your_branch
 
-
-
 ### Release Ready Branch
 
 When your feature branch or hotfix branch are ready to go, move into ready/ directory,
@@ -90,20 +88,16 @@ To move specified branch to ready/:
 
     $ git ready [branch name]
 
-To setup specified branch to ready, and merge into specified branch (master or develop)
+For example, to setup hotfix-3011 branch to ready.
 
-    $ git ready [branch name] --merge [target branches]
-
-For example, to setup hotfix-3011 branch to ready, and merge into master, develop branches:
-
-    $ git ready hotfix-3011 --merge master,develop
-
+    $ git ready hotfix-3011
+    > ready/hotfix-3011
 
 Steps are followed below:
 
 * Trigger unit tests, selenium tests, continue to next step if it passed.
-* Move local branch to ready/
 * Prune remote branches.
+* Rename branch prefix to ready/
 * Merge into current release branch.
 
 ### Release Branch
