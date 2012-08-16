@@ -14,6 +14,7 @@ sub all {
 	my $self = shift;
     # provide a list context to get remote names
     my @remotes = $self->manager->repo->command('remote');
+    chomp(@remotes);
     return @remotes;
 }
 

@@ -123,14 +123,6 @@ END
     chmod 0755, $checkout_hook;
 }
 
-sub get_remotes {
-    my $self = shift;
-
-    # provide a list context to get remote names
-    my @remotes = $self->repo->command('remote');
-    return @remotes;
-}
-
 sub update_remote_refs {
     my $self = shift; 
     return $self->repo->command(qw(remote update --prune));
