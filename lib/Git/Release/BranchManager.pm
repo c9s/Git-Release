@@ -52,7 +52,7 @@ sub feature_branches {
 }
 
 sub ready_branches { 
-    my ($sefl,%args) = @_;
+    my ($self,%args) = @_;
     my $prefix = $self->manager->config->ready_prefix;
     my @branches = ();
     if( $args{local} ) {
