@@ -45,30 +45,23 @@ sub current_name {
 }
 
 sub feature_branches {
-    my $self = shift;
+    my ($self,%args) = @_;
     my $prefix = $self->manager->config->feature_prefix;
-    my @branches = $self->remote_branches;
+    my @branches = $self->branches( %args );
     return grep { $_->name =~ /^$prefix\// } @branches;
 }
 
 sub ready_branches { 
     my ($self,%args) = @_;
     my $prefix = $self->manager->config->ready_prefix;
-    my @branches = ();
-    if( $args{local} ) {
-        @branches = $self->local_branches;
-    } elsif( $args{remote} ) {
-        @branches = $self->remote_branches;
-    } else {
-        @branches = $self->local_branches , $self->remote_branches;
-    }
+    my @branches = $self->branches( %args );
     return grep { $_->name =~ /^$prefix\// } @branches;
 }
 
 sub hotfix_branches {
-    my $self = shift;
+    my ($self,%args) = @_;
     my $prefix = $self->manager->config->hotfix_prefix;
-    my @branches = $self->remote_branches;
+    my @branches = $self->branches( %args );
     return grep { $_->name =~ /^$prefix\// } @branches;
 }
 
@@ -80,6 +73,16 @@ sub new_branch {
     my $branch = Git::Release::Branch->new(  
             %args, manager => $self->manager );
     return $branch;
+}
+
+sub branches {
+    my ($self,%args) = @_;
+    if( $args{local} ) {
+        return $self->local_branches;
+    } elsif( $args{remote} ) {
+        return $self->remote_branches;
+    }
+    return ($self->local_branches , $self->remote_branches);
 }
 
 sub find_branches { 
