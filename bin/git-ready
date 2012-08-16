@@ -16,20 +16,21 @@ GetOptions
 
 sub move_branch_to_ready { 
     my $branch_name = shift;
-    my ($cb) = $branch_name
-                ? $re->branch->find_local_branches($branch_name) 
+    my ($branch) = $branch_name
+                ? $re->branch->find_branches($branch_name) 
                 : $re->branch->current;
-    die "branch $branch_name not found." unless $cb;
-    $cb->move_to_ready;
+    die "branch $branch_name not found." unless $branch;
+    $branch->move_to_ready;
 }
 
 if( $opt_list ) {
     # list ready branches
     my @branches = $re->branch->ready_branches;
     for my $b ( @branches ) {
-        say $b->name;
+        say $b->ref;
     }
 } else {
+    $re->update_remote_refs;
     move_branch_to_ready shift;
 }
 

@@ -214,7 +214,7 @@ sub checkout {
 
 sub merge {
     my ($self,$b) = @_;
-    return $self->manager->repo->command( 'merge' , $b->ref );
+    return $self->manager->repo->command( 'merge' , ref($b) ? $b->ref : $b );
 }
 
 sub rebase_from {
@@ -283,6 +283,9 @@ sub prepend_prefix {
         my $local = $self->manager->branch->find_local_branches($self->name);
         $local = $self->checkout unless $local;
 
+        # update and merge
+        $local->pull;
+
         $self->delete( remote => 1 );
         $local->local_rename( $new_name );
         $local->push( $self->remote );
@@ -295,6 +298,21 @@ sub prepend_prefix {
     }
 }
 
+sub pull { 
+    my ($self,%args) = @_;
+    my @args = ('pull');
+    push @args , '--rebase' if $args{rebase};
+    push @args , '--quiet'  if $args{quiet};
+    push @args , '--no-commit'  if $args{no_commit};
+    push @args , '--commit'  if $args{commit};
+    push @args , '--ff'  if $args{fast_forward};
+    push @args , '--edit'  if $args{edit};
+    push @args , '--no-edit'  if $args{no_edit};
+    push @args , '--squash'  if $args{squash};
+    push @args, ($args{remote} || $self->remote || 'origin');
+    push @args, ($args{name} || $self->name);
+    return $self->manager->repo->command(@args);
+}
 
 sub move_to_ready {
     my $self = shift;

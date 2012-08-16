@@ -8,10 +8,21 @@ $|++;
 
 my @ready = $re->branch->ready_branches;
 
+my $rc = $re->branch->find_branches('rc');
+unless( $rc ) {
+    say "rc branch is not found, creating rc branch from master.";
+    $rc = $re->branch->new_branch('rc')->create(from => 'master');
+}
+$rc->checkout;
+
 say "Found ready branches:";
 for my $b ( @ready ) {
     say "\t", $b->name;
 }
 
-my $rc_branch = $re->branch->find_branches('rc');
+for my $b ( @ready ) {
+    say "Merging " , $b->ref;
+    my @ret = $rc->merge( $b );
+    use Data::Dumper; warn Dumper( @ret );
+}
 

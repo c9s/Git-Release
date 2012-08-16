@@ -52,9 +52,16 @@ sub feature_branches {
 }
 
 sub ready_branches { 
-    my $self = shift;
+    my ($sefl,%args) = @_;
     my $prefix = $self->manager->config->ready_prefix;
-    my @branches = $self->remote_branches;
+    my @branches = ();
+    if( $args{local} ) {
+        @branches = $self->local_branches;
+    } elsif( $args{remote} ) {
+        @branches = $self->remote_branches;
+    } else {
+        @branches = $self->local_branches , $self->remote_branches;
+    }
     return grep { $_->name =~ /^$prefix\// } @branches;
 }
 
