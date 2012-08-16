@@ -260,7 +260,7 @@ sub push {
     $remote ||= $self->remote;
     die "remote name is requried." unless $remote;
     my @args = ('push');
-    CORE::push @args, '--set-upstream', $args{upstream} if $args{upstream};
+    CORE::push @args, '--set-upstream' if $args{upstream};
     CORE::push @args, $remote;
     CORE::push @args, $self->name;
     $self->manager->repo->command(@args);
