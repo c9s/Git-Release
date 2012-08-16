@@ -26,8 +26,15 @@ for my $b ( @ready ) {
     my @lines = $rc->merge( $b );
     say @lines;
     die 'Merge error' unless @lines;
-    system( $opt_testing ) == 0
-        or die("test command $opt_testing failed.");
+    if( $opt_testing ) {
+        system( $opt_testing ) == 0
+            or die("test command $opt_testing failed.");
+    }
+    elsif( -e 't' ) {
+        say "Found perl style test dirctory, run perl prove for testing";
+        system( qw'prove -lv t' ) == 0
+            or die("test command prove -lv failed");
+    }
 }
 
 say color('green'), "Testing done successfully, now it's ready for release.", color('reset');
