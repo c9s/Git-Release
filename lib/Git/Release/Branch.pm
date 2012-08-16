@@ -256,10 +256,14 @@ sub rebase_from {
 }
 
 sub push {
-    my ($self,$remote) = @_;
+    my ($self,$remote,%args) = @_;
     $remote ||= $self->remote;
     die "remote name is requried." unless $remote;
-    $self->manager->repo->command( 'push' , $remote , $self->name );
+    my @args = ('push');
+    CORE::push @args, '--set-upstream', $args{upstream} if $args{upstream};
+    CORE::push @args, $remote;
+    CORE::push @args, $self->name;
+    $self->manager->repo->command(@args);
 }
 
 sub push_to_remotes {
