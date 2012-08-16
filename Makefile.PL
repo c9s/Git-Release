@@ -9,6 +9,7 @@ requires 'File::Spec';
 requires 'File::Basename';
 requires 'Net::Redmine';
 requires 'Getopt::Long';
+requires 'Term::ANSIColor';
 
 tests 't/*.t';
 # author_tests 'xt';
