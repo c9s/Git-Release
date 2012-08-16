@@ -9,6 +9,7 @@ bin/git-ready-merge
 bin/git-release
 bin/git-release-init
 bin/git-release-tag
+bin/git-site
 ChangeLog
 inc/Module/Install.pm
 inc/Module/Install/Base.pm
@@ -31,6 +32,7 @@ Makefile.PL
 MANIFEST
 META.yml
 README.mkd
+NOTES.md
 t/00_compile.t
 t/01_config.t
 t/lib/GitTestUtils.pm
