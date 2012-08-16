@@ -116,7 +116,7 @@ sub install_hooks {
 #!/usr/bin/env perl
 use Git::Release;
 my \$m = Git::Release->new; # release manager
-\$m->get_current_branch->print_doc;
+\$m->branch->current->print_doc;
 END
 
     close $fh;
