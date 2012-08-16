@@ -3,6 +3,7 @@ use 5.12.0;
 use Moose;
 use File::Spec;
 use File::Path qw(mkpath);
+use Git;
 
 has name => ( is => 'rw' , isa => 'Str' );
 
@@ -233,8 +234,16 @@ sub checkout {
 }
 
 sub merge {
-    my ($self,$b) = @_;
-    return $self->manager->repo->command( 'merge' , ref($b) ? $b->ref : $b );
+    my ($self,$b, %args) = @_;
+    my @args = ( 'merge' );
+
+    CORE::push @args, '--ff' if $args{fast_forward};
+    CORE::push @args, '--edit' if $args{edit};
+    CORE::push @args, '--no-edit' if $args{no_edit};
+    CORE::push @args, '--squash' if $args{squash};
+    CORE::push @args, '--quiet' if $args{quiet};
+    CORE::push @args, ref($b) eq 'Git::Release::Branch' ? $b->ref : $b;
+    return $self->manager->repo->command( @args );
 }
 
 sub rebase_from {
