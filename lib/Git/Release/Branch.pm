@@ -240,6 +240,10 @@ sub rename {
         $self->name($new_name);
         $self->update_ref($new_name);
     }
+    elsif( $self->is_local && $self->tracking_ref ) {
+        $self->delete( remote => 1 );
+        $local->local_rename( $new_name , %args );
+    }
     elsif( $self->is_local ) {
         $self->local_rename($new_name,%args);
     }
