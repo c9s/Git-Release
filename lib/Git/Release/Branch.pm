@@ -30,6 +30,12 @@ sub BUILD {
     }
 
     # remote tracking ref
+    unless ( $args->{tracking_ref} ) {
+        # try to get tracking ref
+        my %tracking = $self->manager->tracking_list;
+        $args->{tracking_ref} = $tracking{ $args->{name} } 
+            if $args->{name} && defined $tracking{ $args->{name} };
+    } 
     $args->{tracking_ref} =~ s{^refs/}{} if $args->{tracking_ref};
 
     unless( $args->{remote} ) {

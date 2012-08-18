@@ -130,13 +130,14 @@ sub tracking_list {
     push @args ,'%(refname:short):%(upstream)';
     push @args, 'refs/heads';
     my @lines = $self->repo->command(@args);
-    my %tracking = map { split /:/ } @lines;
+
+    my %tracking = map { split ':', $_ , 2 } @lines;
     return %tracking;
 }
 
 sub update_remote_refs {
     my $self = shift; 
-    return $self->repo->command(qw(remote update --prune));
+    $self->repo->command_oneline(qw(remote update --prune));
 }
 
 sub _new_branch {
