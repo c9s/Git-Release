@@ -8,7 +8,7 @@ $|++;
 
 my %tracking = $re->tracking_list;
 my $w = 24;
-map { if(length($_) > $w) { $w = $_ }  } keys %tracking;
+map { if(length($_) > $w) { $w = length($_) }  } keys %tracking;
 for my $ref ( keys %tracking ) {
     printf "%${w}s is tracking %s\n", $ref , ($tracking{ $ref } || '(none)')
 }
