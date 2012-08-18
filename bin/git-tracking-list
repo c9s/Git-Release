@@ -8,5 +8,5 @@ $|++;
 
 my %tracking = $re->tracking_list;
 for my $ref ( keys %tracking ) {
-    printf "%20s is tracking %10s\n", $ref , $tracking{ $ref } ;
+    printf "%24s is tracking %10s\n", $ref , ($tracking{ $ref } || '(none)')
 }
