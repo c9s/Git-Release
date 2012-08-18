@@ -1,4 +1,5 @@
 #!/usr/bin/env perl
+use lib 'lib';
 use 5.12.0;
 use Getopt::Long;
 use Git::Release;

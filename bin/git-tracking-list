@@ -1,0 +1,12 @@
+#!/usr/bin/env perl
+use 5.12.0;
+use Getopt::Long;
+use Git::Release;
+use lib 'lib';
+my $re = Git::Release->new;
+$|++;
+
+my %tracking = $re->tracking_list;
+for my $ref ( keys %tracking ) {
+    printf "%20s is tracking %10s\n", $ref , $tracking{ $ref } ;
+}
