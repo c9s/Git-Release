@@ -1,8 +1,6 @@
 #!/usr/bin/env perl
-use warnings;
-use strict;
-use feature qw(say switch);
-use Git;
+use lib 'lib';
+use 5.12.0;
 use Getopt::Long;
 use Git::Release;
 
