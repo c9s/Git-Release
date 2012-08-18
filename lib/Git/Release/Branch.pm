@@ -253,6 +253,7 @@ sub rename {
     elsif( $self->is_local && $self->tracking_ref ) {
         $self->delete( remote => 1 );
         $self->local_rename( $new_name , %args );
+        $self->push( $self->remote_name );  # push to tracking remote
     }
     elsif( $self->is_local ) {
         $self->local_rename($new_name,%args);
