@@ -34,12 +34,15 @@ any automatic nightly builds are built from.
 
 A feature branch may branch off from `develop` branch,
 
-If a feature branch is finished, the branch can merge back to develop.
+Once the feature branch is finished, the branch 
+should be renamed with ready/ prefix first, 
+which means this branch is ready to be released.
 
-Or it should merge back to a release branch if the feature branch is schuduled to be released. 
-and the branch should be renamed with ready/ prefix, which means this branch is ready to be released.
+it should be merged back to a release branch later
+if the feature branch is schuduled to be released. 
 
-By this, you can easily distinguish what branch is going to be released, what
+By using ready/ prefix, you can easily distinguish 
+what branch is going to be released, what
 branch should be waiting the next release.
 
 To create a feature branch from current branch:
@@ -54,6 +57,9 @@ This will create a feature branch with prefix `feature/`, you can configure the 
 
 A branch named like `feature/ajax` will be created.
 
+To list feature branches:
+
+    $ git feature --list
 
 ### Branch document
 
@@ -68,7 +74,6 @@ May branch off from `master`,
 
 Must merge back to `develop` and `master`.
 
-
 To create a hotfix branch from master:
 
     $ git hotfix [hotfix name]
@@ -77,6 +82,10 @@ This is not recommended, but you can still create a hotfix branch from a specifi
 if your production branch is not named master,
 
     $ git hotfix [hotfix name] your_branch
+
+To list hotfix branches:
+
+    $ git hotfix --list
 
 ### Release Ready Branch
 
@@ -93,8 +102,8 @@ To move specified branch to ready/:
 
 For example, to setup hotfix-3011 branch to ready.
 
-    $ git ready hotfix-3011
-    > ready/hotfix-3011
+    $ git ready hotfix/bug3011
+    > ready/hotfix/bug3011
 
 Steps are followed below:
 
@@ -123,7 +132,7 @@ Once your release branch is ready, you can run release.
 
     $ git release 
     
-(Not implemented)
+(Not implemented yet)
 
 The release steps are followed below,
 
@@ -155,10 +164,10 @@ to customzie your git-release config, edit your .gitconfig:
         develop-branch = development
         production-branch = master
         production-branch = production
-        release-branch-prefix = release/
-        feature-branch-prefix = feature/
-        hotfix-branch-prefix  = hotfix/
-        site-branch-prefix    = 
+        release-branch-prefix = release
+        feature-branch-prefix = feature
+        hotfix-branch-prefix  = hotfix
+        site-branch-prefix    = site
 
 # Reference
 
