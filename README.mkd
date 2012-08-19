@@ -1,6 +1,5 @@
 Git::Release
 ============
-(Working in progress, alpha stage)
 
 Git::Release provides many useful features 
 to reduce your release process efforts.
@@ -141,6 +140,18 @@ The release steps are followed below,
 * Delete current release branch.
 * Tag a release version on master.
 * Rebase master branch onto `develop` branch.
+
+### The release command
+
+Once your release candidate branch is tested and is ready to release, you 
+can simply run `git-release` tool to release your rc branch to master.
+
+What the `git-release` does is really simply, it checkouts master and merge 
+the rc branch, then tag it with the version you give, then pushs them to the
+tracking remote.
+
+    git release rc --version=2.1.1 --tag
+
 
 ### Site Branch
 
