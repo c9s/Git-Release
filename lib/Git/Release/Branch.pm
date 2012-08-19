@@ -135,6 +135,13 @@ sub remote_name {
     }
 }
 
+
+# return remote object
+sub get_remote { 
+    my $self = shift;
+    return $self->manager->remote->get( $self->remote_name );
+}
+
 sub remote_tracking_branch {
     my $self = shift;
     return $self->manager->branch->new_branch(ref => $self->tracking_ref);
@@ -290,7 +297,6 @@ sub checkout {
 sub merge {
     my ($self,$b, %args) = @_;
     my @args = ( 'merge' );
-
     CORE::push @args, '--ff' if $args{fast_forward};
     CORE::push @args, '--edit' if $args{edit};
     CORE::push @args, '--no-edit' if $args{no_edit};
@@ -317,6 +323,8 @@ sub push {
 
     # git push --set-upstream origin develop
     CORE::push @args, '--set-upstream' if $args{upstream};
+    CORE::push @args, '--tags' if $args{tags};
+    CORE::push @args, '--all' if $args{all};
     CORE::push @args, $remote;
     CORE::push @args, $self->name;
     $self->manager->repo->command(@args);

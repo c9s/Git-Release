@@ -5,14 +5,42 @@ use Git;
 use Getopt::Long;
 use List::MoreUtils qw(uniq);
 use DateTime;
+use Term::ANSIColor;
 use Git::Release;
 $|++;
 
+
+my $opt_version;
+my $opt_tag;
+GetOption(
+    'tag' => \$opt_tag,
+    'version=s' => \$opt_version,
+);
+
+die "--version option is required." unless $opt_version;
+
 my $release = Git::Release->new;
+my ($rc_branch) = $release->branch->find_branches( 'rc' );
+
+die "rc branch not found, can not release." unless $rc_branch;
+
+my ($master) = $release->branch->find_branches( 'master' );
+my $local_rc = $rc_branch->checkout;
+
+say color('green'), "Checking out master" , color('reset');
+$master->checkout;
+
+say color('green'), "Merging changes from rc" , color('reset');
+my @lines = $master->merge( $local_rc );
+print $_ , "\n" for @lines;
 
 
+if( $opt_tag ) {
+    say "Tagging $opt_version";
+    $release->repo->command('tag', $opt_version, '-m' , "Release version $opt_version." );
+}
 
-
+$master->push( $master->remote_name , tags => 1 );
 __END__
 =pod
 
