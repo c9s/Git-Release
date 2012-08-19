@@ -24,7 +24,7 @@ for my $b ( @ready ) {
 for my $b ( @ready ) {
     say "===> Merging " , $b->ref;
     my @lines = $rc->merge( $b );
-    say @lines;
+    say for @lines;
     die 'Merge error' unless @lines;
     if( $opt_testing ) {
         system( $opt_testing ) == 0
