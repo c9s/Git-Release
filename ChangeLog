@@ -1,5 +1,10 @@
 
 
+0.04 日  8/19 17:49:04 2012
+
+- Improve git-rc script
+- Support remote tracking branch
+
 0.03 四  8/16 22:31:21 2012
 
 - Add git-site script.

@@ -10,6 +10,7 @@ bin/git-release
 bin/git-release-init
 bin/git-release-tag
 bin/git-site
+bin/git-tracking-list
 ChangeLog
 inc/Module/Install.pm
 inc/Module/Install/Base.pm
