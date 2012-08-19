@@ -12,15 +12,17 @@ $|++;
 
 my $opt_version;
 my $opt_tag;
-GetOption(
+GetOptions(
     'tag' => \$opt_tag,
     'version=s' => \$opt_version,
 );
 
 die "--version option is required." unless $opt_version;
 
+my $release_from = shift || 'rc';
+
 my $release = Git::Release->new;
-my ($rc_branch) = $release->branch->find_branches( 'rc' );
+my ($rc_branch) = $release->branch->find_branches( $release_from );
 
 die "rc branch not found, can not release." unless $rc_branch;
 
@@ -36,11 +38,15 @@ print $_ , "\n" for @lines;
 
 
 if( $opt_tag ) {
-    say "Tagging $opt_version";
+    say color('green'), "Tagging $opt_version" , color('reset');
     $release->repo->command('tag', $opt_version, '-m' , "Release version $opt_version." );
 }
 
+say color('green'), "Pushing to remote ", $master->remote_name, color('reset');
 $master->push( $master->remote_name , tags => 1 );
+
+say color('green'), "$opt_version is now released" , color('reset');
+
 __END__
 =pod
 
