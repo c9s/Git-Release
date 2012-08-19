@@ -12,9 +12,11 @@ $|++;
 
 my $opt_version;
 my $opt_tag;
+my $opt_cleanup;
 GetOptions(
     'tag' => \$opt_tag,
     'version=s' => \$opt_version,
+    'cleanup' => \$opt_cleanup,
 );
 
 die "--version option is required." unless $opt_version;
@@ -44,18 +46,21 @@ if( $opt_tag ) {
 say color('green'), "Pushing to remote ", $master->remote_name, color('reset');
 $master->push( $master->remote_name , tags => 1 );
 
-say color('green'), "Deleting local ready branches", color('reset');
-my @ready = $release->branch->ready_branches( local => 1 );
-for ( @ready ) {
-    say color('green'), "Deleting " , $_->ref , color('reset');
-    $_->delete( local => 1 );
-}
 
-say color('green'), "Deleting remote ready branches", color('reset');
-@ready = $release->branch->ready_branches( remote => 1 );
-for ( @ready ) {
-    say color('green'), "Deleting " , $_->ref , color('reset');
-    $_->delete;
+if( $opt_cleanup ) {
+    say color('green'), "Deleting local ready branches", color('reset');
+    my @ready = $release->branch->ready_branches( local => 1 );
+    for ( @ready ) {
+        say color('green'), "Deleting " , $_->ref , color('reset');
+        $_->delete( local => 1 );
+    }
+
+    say color('green'), "Deleting remote ready branches", color('reset');
+    @ready = $release->branch->ready_branches( remote => 1 );
+    for ( @ready ) {
+        say color('green'), "Deleting " , $_->ref , color('reset');
+        $_->delete;
+    }
 }
 
 say color('green'), "$opt_version is now released" , color('reset');
