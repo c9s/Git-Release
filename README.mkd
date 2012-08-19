@@ -127,12 +127,9 @@ Steps are followed below:
 * find release ready branches (with ready/ prefix)
 * merge ready branches one by one, and do testing after each merge.
 
-Once your release branch is ready, you can run release.
+### The release command
 
-    $ git release 
-    
-(Not implemented yet)
-
+<!--
 The release steps are followed below,
 
 * Rename current ready/ branches with released prefix.
@@ -140,8 +137,7 @@ The release steps are followed below,
 * Delete current release branch.
 * Tag a release version on master.
 * Rebase master branch onto `develop` branch.
-
-### The release command
+-->
 
 Once your release candidate branch is tested and is ready to release, you 
 can simply run `git-release` tool to release your rc branch to master.
@@ -162,10 +158,6 @@ Custom Features might be developed on it, some of them can be merged back into
 the next release branch.
 
 # Setup
-
-To install Git::Release process flow helper scripts.
-
-    git release-init
 
 # Configuration
 
