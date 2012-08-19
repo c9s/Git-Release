@@ -1,7 +1,7 @@
 package Git::Release;
 use strict;
 use warnings;
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 use feature qw(say switch);
 use Moose;
 use Cwd;
