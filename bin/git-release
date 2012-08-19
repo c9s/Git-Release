@@ -36,7 +36,6 @@ say color('green'), "Merging changes from rc" , color('reset');
 my @lines = $master->merge( $local_rc );
 print $_ , "\n" for @lines;
 
-
 if( $opt_tag ) {
     say color('green'), "Tagging $opt_version" , color('reset');
     $release->repo->command('tag', $opt_version, '-m' , "Release version $opt_version." );
@@ -44,6 +43,20 @@ if( $opt_tag ) {
 
 say color('green'), "Pushing to remote ", $master->remote_name, color('reset');
 $master->push( $master->remote_name , tags => 1 );
+
+say color('green'), "Deleting local ready branches", color('reset');
+my @ready = $release->branch->ready_branches( local => 1 );
+for ( @ready ) {
+    say color('green'), "Deleting " , $_->ref , color('reset');
+    $_->delete( local => 1 );
+}
+
+say color('green'), "Deleting remote ready branches", color('reset');
+@ready = $release->branch->ready_branches( remote => 1 );
+for ( @ready ) {
+    say color('green'), "Deleting " , $_->ref , color('reset');
+    $_->delete;
+}
 
 say color('green'), "$opt_version is now released" , color('reset');
 
