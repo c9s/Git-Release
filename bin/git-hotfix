@@ -9,7 +9,7 @@ $|++;
 my $opt_list;
 my $opt_remote;
 
-GetOption(
+GetOptions(
     'l|list' => \$opt_list,
     'remote=s' => \$opt_remote,
 );
